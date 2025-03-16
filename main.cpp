@@ -33,7 +33,7 @@ class Simulator {
     void update_water() {
       for (int y = HEIGHT - 2; y >= 0; y--) {
         for (int x = 1; x < WIDTH - 1; x++) {
-          for (grid[y][x] == WATER) {
+          if (grid[y][x] == WATER) {
             // if there's nothing below the water, just keep falling down
             if (grid[y + 1][x] == EMPTY) {
               grid[y + 1][x] = WATER;
@@ -85,7 +85,7 @@ int main() {
     sim.update_water();
     sim.render();
 
-    usleep(500000);
+    usleep(50000);
   }
 
   endwin(); // exit ncurses

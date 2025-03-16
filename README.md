@@ -2,5 +2,5 @@
 
 ## Setup
 1. Install ncurses
-2. gcc main.c -o main -lncurses
+2. g++ main.c -o main -lncurses
 3. ./main

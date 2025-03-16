@@ -1,30 +1,12 @@
-# compiler
-CXX = g++
+all: build run
 
-# compiler flags
-CXXFLAGS = -Wall -Wextra -std=c++11
+build:
+	g++ main.cpp -o main -lncurses
 
-# linker flags
-LDFLAGS = -lncruses
-
-# source files
-SRCS = main.cpp
-
-# output exe
-TARGET = simulator
-
-# build target
-all: $(TARGET)
-
-$(TARGET): $(SRCS)
-	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SRCS) $(LDFLAGS)
-
-run: $(TARGET)
-	./$(TARGET)
-
-# clean
+run:
+	./main
 clean:
-	rm -f $(TARGET)
+	rm -f main
 
 # phony targets
 .PHONY: all clean run

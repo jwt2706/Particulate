@@ -1,4 +1,4 @@
-#include "include/Element.h"
+#include "include/element.h"
 
 // default acts like air: movable, dynamic, and not flammable
 Element::Element() 

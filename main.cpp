@@ -1,93 +1,30 @@
-#include <iostream>
-#include <vector>
 #include <ncurses.h>
-#include <unistd.h>
-
-#define WIDTH 40
-#define HEIGHT 20
-#define WATER '~'
-#define EMPTY ' '
-
-class Simulator {
-  private:
-    std::vector<std::vector<char>> grid;
-
-  public:
-    Simulator() : grid(HEIGHT, std::vector<char>(WIDTH, EMPTY)) {}
-
-    // init empty grid
-    void init_grid() {
-      for (auto &row : grid) {
-        std::fill(row.begin(), row.end(), EMPTY);
-      }
-    }
-
-    // generate water at specified coordinates
-    void generate_water(int x, int y) {
-      if (x > 0 && WIDTH - 1 && y > 0 && y < HEIGHT - 1) {
-        grid[y][x] = WATER;
-      }
-    }
-
-    // update water state
-    void update_water() {
-      for (int y = HEIGHT - 2; y >= 0; y--) {
-        for (int x = 1; x < WIDTH - 1; x++) {
-          if (grid[y][x] == WATER) {
-            // if there's nothing below the water, just keep falling down
-            if (grid[y + 1][x] == EMPTY) {
-              grid[y + 1][x] = WATER;
-              grid[y][x] = EMPTY;
-            }
-
-            // if there's something below the water, then try to move diagonally
-            else if (grid[y + 1][x - 1] == EMPTY) {
-            grid[y + 1][x - 1] = WATER;
-              grid[y][x] = EMPTY;
-            }
-            else if (grid[y + 1][x + 1] == EMPTY) {
-              grid[y + 1][x + 1] = WATER;
-              grid[y][x] = EMPTY;
-            }
-          }
-        }
-      }
-    }
-
-    // render grid with ncurses
-    void render() {
-      clear();
-      for (int y = 0; y < HEIGHT; y++) {
-        for (int x = 0; x < WIDTH; x++) {
-          mvaddch(y, x, grid[y][x]);
-        }
-      }
-      refresh();
-    }
-};
+#include "include/global.h"
+#include "include/element.h"
 
 int main() {
-  initscr();              // init ncurses
-  noecho();               // disable key echoing
-  curs_set(0);            // hide cursor
-  nodelay(stdscr, TRUE);  // non blocking input
+    initscr();
+    noecho();
+    curs_set(0);
+    cbreak(); // Allow instant key input
+    refresh(); // Refresh main screen
+    start_color(); // Enable color
 
-  Simulator sim;
-  sim.init_grid();
+	// get screen demensions
+	int xMax, yMax;
+	getmaxyx(stdscr, yMax, xMax);
+	// create a window for our input
+	WINDOW * playwin = newwin(HEIGHT, WIDTH, (yMax/2)-10, 10);
+	box(playwin, 0, 0);
+	wrefresh(playwin);
 
-  bool running = true;
-  while (running) {
-    // get user input
-    int ch = getch();
-    if (ch == 'q') running = false;
+    // Establish coordinates within window
+    Element grid[HEIGHT][WIDTH];
 
-    sim.generate_water(WIDTH / 2, 1);
-    sim.update_water();
-    sim.render();
+    // Start of game loop
+    // (should be here)
 
-    usleep(50000);
-  }
-
-  endwin(); // exit ncurses
-  return 0;
+    getch(); // Wait for user input before exiting
+    endwin();
+    return 0;
 }

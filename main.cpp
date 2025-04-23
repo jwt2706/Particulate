@@ -21,8 +21,44 @@ int main() {
     // Establish coordinates within window
     Element grid[HEIGHT][WIDTH];
 
-    // Start of game loop
-    // (should be here)
+    // Initialize the grid with default elements
+    for (int y = 0; y < HEIGHT; ++y) {
+        for (int x = 0; x < WIDTH; ++x) {
+            grid[y][x] = Element(); // use use default, since were filling it with air
+        }
+    }
+
+    // game loop
+    bool running = true;
+    while (running) {
+        // render the grid
+        for (int y = 0; y < HEIGHT; ++y) {
+            for (int x = 0; x < WIDTH; ++x) {
+                if (grid[y][x].isMovable()) {
+                    mvwaddch(playwin, y, x, ' '); // empty space
+                } else {
+                    mvwaddch(playwin, y, x, '#'); // solid block
+                }
+            }
+        }
+        wrefresh(playwin);
+
+        // handle user input
+        int ch = getch();
+        switch (ch) {
+            case 'q': // quit
+                running = false;
+                break;
+            case 'p': {
+                int px = WIDTH / 2;
+                int py = HEIGHT / 2;
+                grid[py][px] = Element(true, true, false, 2, 1); // create sand or something
+                break;
+            }
+        }
+
+        // TODO: add logic to update the grid (simulate it all)
+    }
 
     getch(); // Wait for user input before exiting
     endwin();

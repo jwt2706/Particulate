@@ -18,3 +18,11 @@ bool Element::isDynamic() const {
 bool Element::isFlammable() const {
     return flammable;
 }
+
+int Element:: getDensity() const {
+    return density;
+}
+
+int Element::getGravity() const {
+    return gravity;
+}

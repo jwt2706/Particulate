@@ -1,7 +1,7 @@
 all: build run
 
 build:
-	g++ main.cpp -o main -lncurses -std=c++11
+	g++ main.cpp $(wildcard source/*.cpp) -o main -lncurses -std=c++11
 
 run:
 	./main

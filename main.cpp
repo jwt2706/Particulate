@@ -11,19 +11,19 @@ int main() {
     start_color(); // Enable color
 
 	// get screen demensions
-	int xMax, yMax;
-	getmaxyx(stdscr, yMax, xMax);
+	int termHeight, termWidth;
+	getmaxyx(stdscr, termHeight, termWidth);
 	// create a window for our input
-	WINDOW * playwin = newwin(HEIGHT, WIDTH, (yMax/2)-10, 10);
+	WINDOW * playwin = newwin(termHeight, termWidth, 0, 0);
 	box(playwin, 0, 0);
 	wrefresh(playwin);
 
     // Establish coordinates within window
-    Element grid[HEIGHT][WIDTH];
+    Element grid[termHeight][termWidth];
 
     // Initialize the grid with default elements
-    for (int y = 0; y < HEIGHT; ++y) {
-        for (int x = 0; x < WIDTH; ++x) {
+    for (int y = 0; y < termHeight; ++y) {
+        for (int x = 0; x < termWidth; ++x) {
             grid[y][x] = Element(); // use use default, since were filling it with air
         }
     }
@@ -32,10 +32,10 @@ int main() {
     bool running = true;
     while (running) {
         // render the grid
-        for (int y = 0; y < HEIGHT; ++y) {
-            for (int x = 0; x < WIDTH; ++x) {
+        for (int y = 0; y < termHeight; ++y) {
+            for (int x = 0; x < termWidth; ++x) {
                 if (grid[y][x].isMovable()) {
-                    mvwaddch(playwin, y, x, ' '); // empty space
+                    mvwaddch(playwin, y, x, '.'); // empty space
                 } else {
                     mvwaddch(playwin, y, x, '#'); // solid block
                 }
@@ -50,8 +50,8 @@ int main() {
                 running = false;
                 break;
             case 'p': {
-                int px = WIDTH / 2;
-                int py = HEIGHT / 2;
+                int px = termWidth / 2;
+                int py = termHeight / 2;
                 grid[py][px] = Element(true, true, false, 2, 1); // create sand or something
                 break;
             }

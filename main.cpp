@@ -16,14 +16,15 @@ int main() {
 	// create a window for our input
 	WINDOW * playwin = newwin(termHeight, termWidth, 0, 0);
 	box(playwin, 0, 0);
+    mvwprintw(playwin, 0, 2, " Powder Game - Press 'q' to quit ");
 	wrefresh(playwin);
 
     // Establish coordinates within window
     Element grid[termHeight][termWidth];
 
     // Initialize the grid with default elements
-    for (int y = 0; y < termHeight; ++y) {
-        for (int x = 0; x < termWidth; ++x) {
+    for (int y = BORDER_SIZE; y < termHeight - BORDER_SIZE; ++y) {
+        for (int x = BORDER_SIZE; x < termWidth - BORDER_SIZE; ++x) {
             grid[y][x] = Element(); // use use default, since were filling it with air
         }
     }
@@ -32,8 +33,8 @@ int main() {
     bool running = true;
     while (running) {
         // render the grid
-        for (int y = 0; y < termHeight; ++y) {
-            for (int x = 0; x < termWidth; ++x) {
+        for (int y = BORDER_SIZE; y < termHeight - BORDER_SIZE; ++y) {
+            for (int x = BORDER_SIZE; x < termWidth - BORDER_SIZE; ++x) {
                 if (grid[y][x].isMovable()) {
                     mvwaddch(playwin, y, x, '.'); // empty space
                 } else {

@@ -7,6 +7,22 @@ Element::Element()
 Element::Element(bool movable, bool dynamic, bool flammable, int density, int gravity)
     : movable(movable), dynamic(dynamic), flammable(flammable), density(density), gravity(gravity) {}
 
+string Element::getName() const {
+    return name;
+}
+
+string Element::getAscii() const {
+    return ascii;
+}
+
+int Element::getFGColor() const {
+    return fgColor;
+}
+
+int Element::getBGColor() const {
+    return bgColor;
+}
+
 bool Element::isMovable() const {
     return movable;
 }

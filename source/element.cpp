@@ -1,17 +1,19 @@
 #include "../include/element.h"
 
-// default acts like air: movable, dynamic, and not flammable
+// default element is just air
 Element::Element() 
-    : movable(true), dynamic(true), flammable(false), density(1), gravity(0)  {}
+    : Element("air", ' ', COLOR_WHITE, COLOR_WHITE, true, true, false, 1, 0) {}
 
-Element::Element(bool movable, bool dynamic, bool flammable, int density, int gravity)
-    : movable(movable), dynamic(dynamic), flammable(flammable), density(density), gravity(gravity) {}
+Element::Element(const std::string& name, char ascii, int fgColor, int bgColor
+                 bool movable, bool dynamic, bool flammable, int density, int gravity)
+    : name(name), ascii(ascii), fgColor(fgColor), bgColor(bgColor)
+      movable(movable), dynamic(dynamic), flammable(flammable), density(density), gravity(gravity) {}
 
-string Element::getName() const {
+std::string Element::getName() const {
     return name;
 }
 
-string Element::getAscii() const {
+char Element::getAscii() const {
     return ascii;
 }
 

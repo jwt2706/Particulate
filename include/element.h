@@ -2,7 +2,7 @@
 #define ELEMENT_H
 
 #include <string>
-#include <ncurses.h> // Include ncurses for color constants
+#include <ncurses.h> // include ncurses for color constants
 
 class Element {
 private:
@@ -27,12 +27,12 @@ public:
             bool movable, bool dynamic, bool flammable, int density, int gravity);
 
     // static factory methods to generate specific elements
-    static Element water() {
-        return Element("water", '~', COLOR_BLUE, COLOR_BLACK, true, false, true, 1, 1);
-    }
-    
     static Element air() {
         return Element("air", ' ', COLOR_WHITE, COLOR_WHITE, true, true, false, 1, 0);
+    }
+    
+    static Element water() {
+        return Element("water", '~', COLOR_BLUE, COLOR_BLACK, true, false, true, 1, 1);
     }
     
     static Element dirt() {
@@ -59,8 +59,8 @@ public:
     bool isMovable() const;
     bool isDynamic() const;
     bool isFlammable() const;
-    int getDensity() const; // check when you want to see what should 'float' to the surface
-    int getGravity() const; // difference in movement direction (water vs gas)
+    int getDensity() const;
+    int getGravity() const;
 };
 
 #endif

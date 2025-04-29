@@ -2,17 +2,17 @@
 #define ELEMENT_H
 
 #include <string>
-#include <ncurses.h> // include ncurses for color constants
+#include <ncurses.h> // nclude ncurses for color constants
 
 class Element {
 private:
     // element ids
-    std::string name; // name of the element (e.g., "water", "sand")
+    std::string name; // name of the element
     char ascii;       // ascii character to represent the element
 
-    // colors
-    int fgColor;      // foreground color (e.g., COLOR_RED)
-    int bgColor;      // background color (e.g., COLOR_BLACK)
+    // Colors
+    int fgColor;      // foreground color
+    int bgColor;      // background color
 
     // element properties
     bool movable;     // whether the element can move
@@ -23,30 +23,30 @@ private:
 
 public:
     Element();
-    Element(const std::string& name, char ascii, int fgColor, int bgColor
+    Element(const std::string& name, char ascii, int fgColor, int bgColor, 
             bool movable, bool dynamic, bool flammable, int density, int gravity);
 
     // static factory methods to generate specific elements
     static Element air() {
         return Element("air", ' ', COLOR_WHITE, COLOR_WHITE, true, true, false, 1, 0);
     }
-    
+
     static Element water() {
         return Element("water", '~', COLOR_BLUE, COLOR_BLACK, true, false, true, 1, 1);
     }
-    
+
     static Element dirt() {
         return Element("dirt", '#', COLOR_YELLOW, COLOR_BLACK, false, false, false, 3, 0);
     }
-    
+
     static Element sand() {
         return Element("sand", '%', COLOR_YELLOW, COLOR_BLACK, true, true, false, 2, 1);
     }
-    
+
     static Element fire() {
         return Element("fire", '*', COLOR_RED, COLOR_BLACK, false, false, true, 1, 0);
     }
-    
+
     static Element stone() {
         return Element("stone", '#', COLOR_WHITE, COLOR_BLACK, false, false, false, 5, 0);
     }

@@ -4,10 +4,11 @@
 Element::Element() 
     : Element("air", ' ', COLOR_WHITE, COLOR_WHITE, true, true, false, 1, 0) {}
 
-Element::Element(const std::string& name, char ascii, int fgColor, int bgColor
+Element::Element(const std::string& name, char ascii, int fgColor, int bgColor, 
                  bool movable, bool dynamic, bool flammable, int density, int gravity)
-    : name(name), ascii(ascii), fgColor(fgColor), bgColor(bgColor)
-      movable(movable), dynamic(dynamic), flammable(flammable), density(density), gravity(gravity) {}
+    : name(name), ascii(ascii), fgColor(fgColor), bgColor(bgColor), 
+      movable(movable), dynamic(dynamic), flammable(flammable), 
+      density(density), gravity(gravity) {}
 
 std::string Element::getName() const {
     return name;

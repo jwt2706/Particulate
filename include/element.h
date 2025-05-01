@@ -28,7 +28,7 @@ public:
 
     // static factory methods to generate specific elements
     static Element air() {
-        return Element("air", ' ', COLOR_WHITE, COLOR_WHITE, true, true, false, 1, 0);
+        return Element("air", ' ', COLOR_BLACK, COLOR_BLACK, true, true, false, 1, 0);
     }
 
     static Element water() {
@@ -49,6 +49,10 @@ public:
 
     static Element stone() {
         return Element("stone", '#', COLOR_WHITE, COLOR_BLACK, false, false, false, 5, 0);
+    }
+
+    static Element grass() {
+        return Element("grass", '_', COLOR_GREEN, COLOR_BLACK, false, false, false, 1, 0);
     }
 
     // accessor methods

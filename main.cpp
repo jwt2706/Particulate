@@ -1,13 +1,13 @@
 #include <signal.h>
 #include <ncurses.h>
-#include "include/global.h"
 #include "include/element.h"
 
+int BORDER_SIZE = 1;
 WINDOW* playwin; // global window pointer
 int termHeight, termWidth; // global terminal dimensions
 Element** grid; // global grid pointer
 
-void renderFullGrid(Element** grid) {
+void renderFullGrid() {
     // draw border
     box(playwin, 0, 0);
     mvwprintw(playwin, 0, 2, " Powder Game - Press 'q' to quit ");
@@ -32,19 +32,20 @@ void renderFullGrid(Element** grid) {
     wrefresh(playwin);
 }
 
-void resizeHandler(int sig) {
-    // this is mostly temporary, and should keep the existing elements and react to the termial resizing
-    // instead of getting deleted and replaced
-
-
-    // get new dimentions
-    getmaxyx(stdscr, termHeight, termWidth);
-
-    // free old grid
+void freeGrid() {
+    // free the grid memory
     for (int i = 0; i < termHeight; ++i) {
         delete[] grid[i];
     }
     delete[] grid;
+}
+
+void resizeHandler(int sig) {
+    // this is mostly temporary, and should keep the existing elements and react to the termial resizing
+    // instead of getting deleted and replaced
+
+    getmaxyx(stdscr, termHeight, termWidth); // get new terminal dimensions
+    freeGrid(); // free the old grid memory
 
     // create new grid with updated dimensions
     grid = new Element*[termHeight];
@@ -62,7 +63,7 @@ void resizeHandler(int sig) {
     // recreate the window
     wclear(playwin);
     wresize(playwin, termHeight, termWidth);
-    renderFullGrid(grid);
+    renderFullGrid();
 }
 
 void updateGrid() {
@@ -80,11 +81,10 @@ int main() {
 	// get screen demensions
 	getmaxyx(stdscr, termHeight, termWidth);
 
-	// create a window for inputs
-	playwin = newwin(termHeight, termWidth, 0, 0);
-    
-    // this grid will hold the elements for the simulation
-    Element grid[termHeight][termWidth];
+    grid = new Element*[termHeight];
+    for (int i = 0; i < termHeight; ++i) {
+        grid[i] = new Element[termWidth];
+    }
 
     // initialize the grid with default elements
     for (int y = BORDER_SIZE; y < termHeight - BORDER_SIZE; ++y) {
@@ -104,9 +104,9 @@ int main() {
     grid[4][1] = Element::dirt();
     grid[3][1] = Element::grass();
 
-    
-    
-    renderFullGrid(grid);
+    // create window for input
+    playwin = newwin(termHeight, termWidth, 0, 0);
+    renderFullGrid();
 
     signal(SIGWINCH, resizeHandler); // handle window resize dynamically
 
@@ -125,7 +125,7 @@ int main() {
                 if (confirm == 'y' || confirm == 'Y') {
                     running = false;
                 } else if (confirm == 'n' || confirm == 'N') {
-                    renderFullGrid(grid);
+                    renderFullGrid();
                 }
                 break;
 
@@ -135,6 +135,7 @@ int main() {
         }
     }
 
+    freeGrid();
     endwin();
     return 0;
 }

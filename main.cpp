@@ -10,7 +10,7 @@ Element** grid; // global grid pointer
 void renderFullGrid() {
     // draw border
     box(playwin, 0, 0);
-    mvwprintw(playwin, 0, 2, " Particulate | %dpx * %dpx | Press 'q' to quit ", termHeight, termWidth);
+    mvwprintw(playwin, 0, 2, "| Particulate v0.0.1 | Resolution: %dpx * %dpx | Pause (p) |", termHeight, termWidth);
 
     // render the grid of elements
     for (int y = BORDER_SIZE; y < termHeight - BORDER_SIZE; ++y) {
@@ -41,9 +41,6 @@ void freeGrid() {
 }
 
 void resizeHandler(int sig) {
-    // this is mostly temporary, and should keep the existing elements and react to the termial resizing
-    // instead of getting deleted and replaced
-
     endwin();
     refresh();
     resize_term(0, 0);
@@ -138,15 +135,16 @@ int main() {
         int ch = getch(); // user input
 
         switch (ch) {
-            case 'q': {
+            case 'p': {
                 clear();
-                mvprintw(0, 0, "Do you really want to quit? (y/n)");
+                mvprintw(0, 0, "Game Paused!");
+                mvprintw(1, 0, "Resume (r) or Quit (q)?");
                 refresh();
 
                 int confirm = getch();
-                if (confirm == 'y' || confirm == 'Y') {
+                if (confirm == 'q' || confirm == 'Q') {
                     running = false;
-                } else if (confirm == 'n' || confirm == 'N') {
+                } else if (confirm == 'r' || confirm == 'R') {
                     renderFullGrid();
                 }
                 break;

@@ -41,7 +41,7 @@ void resizeHandler(int sig) {
     getmaxyx(stdscr, termHeight, termWidth);
 
     // free old grid
-    for (i = 0, i < termHeight; ++i) {
+    for (int i = 0; i < termHeight; ++i) {
         delete[] grid[i];
     }
     delete[] grid;

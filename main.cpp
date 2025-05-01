@@ -10,7 +10,7 @@ Element** grid; // global grid pointer
 void renderFullGrid() {
     // draw border
     box(playwin, 0, 0);
-    mvwprintw(playwin, 0, 2, " Powder Game - Press 'q' to quit ");
+    mvwprintw(playwin, 0, 2, " Particulate | %dpx * %dpx | Press 'q' to quit ", termHeight, termWidth);
 
     // render the grid of elements
     for (int y = BORDER_SIZE; y < termHeight - BORDER_SIZE; ++y) {
@@ -44,23 +44,45 @@ void resizeHandler(int sig) {
     // this is mostly temporary, and should keep the existing elements and react to the termial resizing
     // instead of getting deleted and replaced
 
-    getmaxyx(stdscr, termHeight, termWidth); // get new terminal dimensions
-    freeGrid(); // free the old grid memory
+    endwin();
+    refresh();
+    resize_term(0, 0);
+    int newHeight, newWidth;
+    getmaxyx(stdscr, newHeight, newWidth); // get new terminal dimensions
 
-    // create new grid with updated dimensions
-    grid = new Element*[termHeight];
-    for (int i = 0; i < termHeight; ++i) {
-        grid[i] = new Element[termWidth];
+    // Create a new grid with updated dimensions
+    Element** newGrid = new Element*[newHeight];
+    for (int i = 0; i < newHeight; ++i) {
+        newGrid[i] = new Element[newWidth];
     }
 
-    // initialize the grid with air
-    for (int y = BORDER_SIZE; y < termHeight - BORDER_SIZE; ++y) {
-        for (int x = BORDER_SIZE; x < termWidth - BORDER_SIZE; ++x) {
-            grid[y][x] = Element::air(); // fill grid with air
+    // Copy existing elements to the new grid
+    for (int y = BORDER_SIZE; y < std::min(termHeight, newHeight) - BORDER_SIZE; ++y) {
+        for (int x = BORDER_SIZE; x < std::min(termWidth, newWidth) - BORDER_SIZE; ++x) {
+            newGrid[y][x] = grid[y][x];
         }
     }
 
+    // Initialize new cells with air
+    for (int y = BORDER_SIZE; y < newHeight - BORDER_SIZE; ++y) {
+        for (int x = BORDER_SIZE; x < newWidth - BORDER_SIZE; ++x) {
+            if (y >= termHeight || x >= termWidth) {
+                newGrid[y][x] = Element::air();
+            }
+        }
+    }
+
+    // Free the old grid memory
+    freeGrid();
+
+    // Update global variables and grid pointer
+    termHeight = newHeight;
+    termWidth = newWidth;
+    grid = newGrid;
+
+
     // recreate the window
+    playwin = newwin(termHeight, termWidth, 0, 0);
     wclear(playwin);
     wresize(playwin, termHeight, termWidth);
     renderFullGrid();

@@ -5,7 +5,7 @@
 
 int BORDER_SIZE = 1;
 WINDOW* playwin; // global window pointer
-int fps = 5; // frames per second
+int fps = 15; // frames per second
 int termHeight, termWidth; // global terminal dimensions
 Element** grid; // global grid pointer
 
@@ -102,47 +102,44 @@ void updateGrid() {
         for (int x = BORDER_SIZE; x < termWidth - BORDER_SIZE; ++x) {
             Element& current = grid[y][x];
 
-            if (current.getName() == "water") {
-                // Water falls down if the cell below is empty
-                if (grid[y + 1][x].getName() == "air") {
+            // Skip immovable elements
+            if (!current.isMovable()) {
+                continue;
+            }
+
+            // Gravity-based movement (falling down)
+            if (current.getGravity() > 0) {
+                // Check if the cell below is empty or less dense
+                if (y + 1 < termHeight - BORDER_SIZE && grid[y + 1][x].getDensity() < current.getDensity()) {
                     newGrid[y + 1][x] = current;
                     newGrid[y][x] = Element::air();
+                    continue;
                 }
-                // Spread sideways if blocked
-                else if (grid[y + 1][x].getName() != "air") {
-                    if (grid[y][x - 1].getName() == "air") {
-                        newGrid[y][x - 1] = current;
-                        newGrid[y][x] = Element::air();
-                    } else if (grid[y][x + 1].getName() == "air") {
-                        newGrid[y][x + 1] = current;
-                        newGrid[y][x] = Element::air();
-                    }
-                }
-            } else if (current.getName() == "sand") {
-                // Sand falls down if the cell below is empty
-                if (grid[y + 1][x].getName() == "air") {
-                    newGrid[y + 1][x] = current;
-                    newGrid[y][x] = Element::air();
-                }
-                // Falls diagonally if blocked
-                else if (grid[y + 1][x].getName() != "air") {
-                    if (grid[y + 1][x - 1].getName() == "air") {
+
+                // Check for diagonal movement if blocked below
+                if (y + 1 < termHeight - BORDER_SIZE) {
+                    if (x - 1 >= BORDER_SIZE && grid[y + 1][x - 1].getDensity() < current.getDensity()) {
                         newGrid[y + 1][x - 1] = current;
                         newGrid[y][x] = Element::air();
-                    } else if (grid[y + 1][x + 1].getName() == "air") {
+                        continue;
+                    }
+                    if (x + 1 < termWidth - BORDER_SIZE && grid[y + 1][x + 1].getDensity() < current.getDensity()) {
                         newGrid[y + 1][x + 1] = current;
                         newGrid[y][x] = Element::air();
+                        continue;
                     }
                 }
-            } else if (current.getName() == "fire") {
-                // Fire burns flammable elements
-                if (grid[y + 1][x].isFlammable()) {
+            }
+
+            // Fire behavior (burning flammable elements)
+            if (current.isFlammable()) {
+                if (y + 1 < termHeight - BORDER_SIZE && grid[y + 1][x].isFlammable()) {
                     newGrid[y + 1][x] = Element::fire();
                 }
-                if (grid[y][x - 1].isFlammable()) {
+                if (x - 1 >= BORDER_SIZE && grid[y][x - 1].isFlammable()) {
                     newGrid[y][x - 1] = Element::fire();
                 }
-                if (grid[y][x + 1].isFlammable()) {
+                if (x + 1 < termWidth - BORDER_SIZE && grid[y][x + 1].isFlammable()) {
                     newGrid[y][x + 1] = Element::fire();
                 }
                 // Fire disappears after burning

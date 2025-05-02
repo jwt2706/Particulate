@@ -32,27 +32,27 @@ public:
     }
 
     static Element water() {
-        return Element("water", '~', COLOR_BLUE, COLOR_BLACK, true, false, true, 1, 1);
+        return Element("water", '~', COLOR_BLUE, COLOR_BLACK, true, false, true, 3, 1);
     }
 
     static Element dirt() {
-        return Element("dirt", '#', COLOR_YELLOW, COLOR_BLACK, false, false, false, 3, 0);
+        return Element("dirt", '#', COLOR_YELLOW, COLOR_BLACK, false, false, false, 10, 0);
     }
 
     static Element sand() {
-        return Element("sand", '%', COLOR_YELLOW, COLOR_BLACK, true, true, false, 2, 1);
+        return Element("sand", '%', COLOR_YELLOW, COLOR_BLACK, true, true, false, 8, 1);
     }
 
     static Element fire() {
-        return Element("fire", '*', COLOR_RED, COLOR_BLACK, false, false, true, 1, 0);
+        return Element("fire", '*', COLOR_RED, COLOR_BLACK, false, false, true, 3, 0);
     }
 
     static Element stone() {
-        return Element("stone", '#', COLOR_WHITE, COLOR_BLACK, false, false, false, 5, 0);
+        return Element("stone", '#', COLOR_WHITE, COLOR_BLACK, false, false, false, 11, 0);
     }
 
     static Element grass() {
-        return Element("grass", '_', COLOR_GREEN, COLOR_BLACK, false, false, false, 1, 0);
+        return Element("grass", '_', COLOR_GREEN, COLOR_BLACK, false, false, false, 8, 0);
     }
 
     // accessor methods

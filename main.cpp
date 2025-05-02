@@ -1,16 +1,18 @@
+#include <time.h>
 #include <signal.h>
 #include <ncurses.h>
 #include "include/element.h"
 
 int BORDER_SIZE = 1;
 WINDOW* playwin; // global window pointer
+int fps = 5; // frames per second
 int termHeight, termWidth; // global terminal dimensions
 Element** grid; // global grid pointer
 
 void renderFullGrid() {
     // draw border
     box(playwin, 0, 0);
-    mvwprintw(playwin, 0, 2, "| Particulate v0.0.1 | Resolution: %dpx * %dpx | Pause (p) |", termHeight, termWidth);
+    mvwprintw(playwin, 0, 2, "| Particulate v0.0.1 | Resolution: %dpx * %dpx | FPS: %d | Pause (p) |", termHeight, termWidth, fps);
 
     // render the grid of elements
     for (int y = BORDER_SIZE; y < termHeight - BORDER_SIZE; ++y) {
@@ -86,7 +88,72 @@ void resizeHandler(int sig) {
 }
 
 void updateGrid() {
-    return;
+    // Create a temporary grid to store updates
+    Element** newGrid = new Element*[termHeight];
+    for (int i = 0; i < termHeight; ++i) {
+        newGrid[i] = new Element[termWidth];
+        for (int j = 0; j < termWidth; ++j) {
+            newGrid[i][j] = grid[i][j]; // Copy the current grid
+        }
+    }
+
+    // Iterate through the grid
+    for (int y = termHeight - 2; y >= BORDER_SIZE; --y) { // Bottom to top
+        for (int x = BORDER_SIZE; x < termWidth - BORDER_SIZE; ++x) {
+            Element& current = grid[y][x];
+
+            if (current.getName() == "water") {
+                // Water falls down if the cell below is empty
+                if (grid[y + 1][x].getName() == "air") {
+                    newGrid[y + 1][x] = current;
+                    newGrid[y][x] = Element::air();
+                }
+                // Spread sideways if blocked
+                else if (grid[y + 1][x].getName() != "air") {
+                    if (grid[y][x - 1].getName() == "air") {
+                        newGrid[y][x - 1] = current;
+                        newGrid[y][x] = Element::air();
+                    } else if (grid[y][x + 1].getName() == "air") {
+                        newGrid[y][x + 1] = current;
+                        newGrid[y][x] = Element::air();
+                    }
+                }
+            } else if (current.getName() == "sand") {
+                // Sand falls down if the cell below is empty
+                if (grid[y + 1][x].getName() == "air") {
+                    newGrid[y + 1][x] = current;
+                    newGrid[y][x] = Element::air();
+                }
+                // Falls diagonally if blocked
+                else if (grid[y + 1][x].getName() != "air") {
+                    if (grid[y + 1][x - 1].getName() == "air") {
+                        newGrid[y + 1][x - 1] = current;
+                        newGrid[y][x] = Element::air();
+                    } else if (grid[y + 1][x + 1].getName() == "air") {
+                        newGrid[y + 1][x + 1] = current;
+                        newGrid[y][x] = Element::air();
+                    }
+                }
+            } else if (current.getName() == "fire") {
+                // Fire burns flammable elements
+                if (grid[y + 1][x].isFlammable()) {
+                    newGrid[y + 1][x] = Element::fire();
+                }
+                if (grid[y][x - 1].isFlammable()) {
+                    newGrid[y][x - 1] = Element::fire();
+                }
+                if (grid[y][x + 1].isFlammable()) {
+                    newGrid[y][x + 1] = Element::fire();
+                }
+                // Fire disappears after burning
+                newGrid[y][x] = Element::air();
+            }
+        }
+    }
+
+    // Replace the old grid with the updated grid
+    freeGrid();
+    grid = newGrid;
 }
 
 int main() {
@@ -114,14 +181,7 @@ int main() {
 
     // add some random elelments
     grid[1][1] = Element::water();
-    grid[1][2] = Element::dirt();
-    grid[1][3] = Element::sand();
-    grid[1][4] = Element::fire();
-    grid[1][5] = Element::stone();
-    grid[1][6] = Element::grass();
 
-    grid[4][1] = Element::dirt();
-    grid[3][1] = Element::grass();
 
     // create window for input
     playwin = newwin(termHeight, termWidth, 0, 0);
@@ -131,11 +191,16 @@ int main() {
 
     // game loop
     bool running = true;
+    struct timespec ts;
+    ts.tv_sec = 0;
+    ts.tv_nsec = 1000000000 / fps; // set the frame rate
+    nodelay(stdscr, TRUE); // makes getch() non-blocking
     while (running) {
         int ch = getch(); // user input
 
         switch (ch) {
             case 'p': {
+                nodelay(stdscr, FALSE); // block until user input
                 clear();
                 mvprintw(0, 0, "Game Paused!");
                 mvprintw(1, 0, "Resume (r) or Quit (q)?");
@@ -147,12 +212,21 @@ int main() {
                 } else if (confirm == 'r' || confirm == 'R') {
                     renderFullGrid();
                 }
+                nodelay(stdscr, TRUE); // resume non-blocking input
                 break;
 
+            }
+            case 'w': {
+                grid[1][1] = Element::water();
+                break;
             }
             default:
                 break;
         }
+
+        updateGrid();
+        renderFullGrid();
+        nanosleep(&ts, NULL); // sleep for the specified time to control the frame rate
     }
 
     freeGrid();

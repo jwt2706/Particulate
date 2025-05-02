@@ -10,7 +10,7 @@ int termHeight, termWidth; // global terminal dimensions
 int selectedX, selectedY; // selected coordinates by mouse
 Element** grid; // global grid pointer
 
-void renderFullGrid() {
+void renderGrid() {
     // draw border
     box(playwin, 0, 0);
     mvwprintw(playwin, 0, 2, "| Particulate v0.0.1 | Resolution: %dpx * %dpx | FPS: %d | Pause (p) |", termHeight, termWidth, fps);
@@ -86,10 +86,10 @@ void resizeHandler(int sig) {
     playwin = newwin(termHeight, termWidth, 0, 0);
     wclear(playwin);
     wresize(playwin, termHeight, termWidth);
-    renderFullGrid();
+    renderGrid();
 }
 
-void updateGrid() {
+void updateState() {
     // Create a temporary grid to store updates
     Element** newGrid = new Element*[termHeight];
     for (int i = 0; i < termHeight; ++i) {
@@ -184,7 +184,7 @@ int main() {
 
     // create window for input
     playwin = newwin(termHeight, termWidth, 0, 0);
-    renderFullGrid();
+    renderGrid();
 
     signal(SIGWINCH, resizeHandler); // handle window resize dynamically
 
@@ -204,6 +204,7 @@ int main() {
                     selectedX = event.x;
                     selectedY = event.y;
                 }
+                break;
             }
             case 'p': {
                 nodelay(stdscr, FALSE); // block until user input
@@ -216,11 +217,10 @@ int main() {
                 if (confirm == 'q' || confirm == 'Q') {
                     running = false;
                 } else if (confirm == 'r' || confirm == 'R') {
-                    renderFullGrid();
+                    renderGrid();
                 }
                 nodelay(stdscr, TRUE); // resume non-blocking input
                 break;
-
             }
             case 'w': {
                 grid[1][1] = Element::water();
@@ -254,8 +254,8 @@ int main() {
                 break;
         }
 
-        updateGrid();
-        renderFullGrid();
+        updateState();
+        renderGrid();
         nanosleep(&ts, NULL); // sleep for the specified time to control the frame rate
     }
 

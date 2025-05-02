@@ -7,12 +7,14 @@ int BORDER_SIZE = 1;
 WINDOW* playwin; // global window pointer
 int fps = 15; // frames per second
 int termHeight, termWidth; // global terminal dimensions
+int selectedX, selectedY; // selected coordinates by mouse
 Element** grid; // global grid pointer
 
 void renderFullGrid() {
     // draw border
     box(playwin, 0, 0);
     mvwprintw(playwin, 0, 2, "| Particulate v0.0.1 | Resolution: %dpx * %dpx | FPS: %d | Pause (p) |", termHeight, termWidth, fps);
+    mvwprintw(playwin, termHeight - 1, 2, "| Selected: (%d, %d) | Elements: (w)ater, (s)and, d(irt), (f)ire, (g)rass, (a)ir, r(ock) ", selectedX, selectedY);
 
     // render the grid of elements
     for (int y = BORDER_SIZE; y < termHeight - BORDER_SIZE; ++y) {
@@ -158,7 +160,7 @@ int main() {
     noecho();
     curs_set(0);
     cbreak(); // allow instant key input
-    refresh();
+    mousemask(ALL_MOUSE_EVENTS | REPORT_MOUSE_POSITION, NULL); // enable mouse events
     start_color();
 
 	// get screen demensions
@@ -196,6 +198,13 @@ int main() {
         int ch = getch(); // user input
 
         switch (ch) {
+            case KEY_MOUSE: {
+                MEVENT event;
+                if (getmouse(&event) == OK) {
+                    selectedX = event.x;
+                    selectedY = event.y;
+                }
+            }
             case 'p': {
                 nodelay(stdscr, FALSE); // block until user input
                 clear();
@@ -237,8 +246,8 @@ int main() {
                 grid[1][1] = Element::air();
                 break;
             }
-            case 'x': {
-                grid[1][1] = Element::stone();
+            case 'r': {
+                grid[1][1] = Element::rock();
                 break;
             }
             default:

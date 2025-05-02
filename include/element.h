@@ -47,8 +47,8 @@ public:
         return Element("fire", '*', COLOR_RED, COLOR_BLACK, false, false, true, 3, 0);
     }
 
-    static Element stone() {
-        return Element("stone", '#', COLOR_WHITE, COLOR_BLACK, false, false, false, 11, 0);
+    static Element rock() {
+        return Element("rock", '#', COLOR_WHITE, COLOR_BLACK, false, false, false, 11, 0);
     }
 
     static Element grass() {

@@ -217,6 +217,30 @@ int main() {
                 grid[1][1] = Element::water();
                 break;
             }
+            case 's': {
+                grid[1][1] = Element::sand();
+                break;
+            }
+            case 'd': {
+                grid[1][1] = Element::dirt();
+                break;
+            }
+            case 'f': {
+                grid[1][1] = Element::fire();
+                break;
+            }
+            case 'g': {
+                grid[1][1] = Element::grass();
+                break;
+            }
+            case 'a': {
+                grid[1][1] = Element::air();
+                break;
+            }
+            case 'x': {
+                grid[1][1] = Element::stone();
+                break;
+            }
             default:
                 break;
         }

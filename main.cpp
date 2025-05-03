@@ -7,7 +7,8 @@ int BORDER_SIZE = 1;
 WINDOW* playwin; // global window pointer
 int fps = 15; // frames per second
 int termHeight, termWidth; // global terminal dimensions
-int selectedX, selectedY; // selected coordinates by mouse
+int selectedX = 1; // selected x coordinate
+int selectedY = 1; // selected y coordinate
 Element** grid; // global grid pointer
 
 void renderGrid() {
@@ -19,6 +20,13 @@ void renderGrid() {
     // render the grid of elements
     for (int y = BORDER_SIZE; y < termHeight - BORDER_SIZE; ++y) {
         for (int x = BORDER_SIZE; x < termWidth - BORDER_SIZE; ++x) {
+
+            if (x == selectedX && y == selectedY) {
+                wattron(playwin, A_REVERSE); // highlight the selected cell
+            } else {
+                wattroff(playwin, A_REVERSE);
+            }
+
             // init color pair with unique color pair ID (using cantoring pairing function)
             int fg = grid[y][x].getFGColor();
             int bg = grid[y][x].getBGColor();
@@ -160,7 +168,7 @@ int main() {
     noecho();
     curs_set(0);
     cbreak(); // allow instant key input
-    mousemask(ALL_MOUSE_EVENTS | REPORT_MOUSE_POSITION, NULL); // enable mouse events
+    keypad(stdscr, TRUE); // enable special keys (like arrow keys)
     start_color();
 
 	// get screen demensions
@@ -178,10 +186,6 @@ int main() {
         }
     }
 
-    // add some random elelments
-    grid[1][1] = Element::water();
-
-
     // create window for input
     playwin = newwin(termHeight, termWidth, 0, 0);
     renderGrid();
@@ -195,15 +199,60 @@ int main() {
     ts.tv_nsec = 1000000000 / fps; // set the frame rate
     nodelay(stdscr, TRUE); // makes getch() non-blocking
     while (running) {
+        MEVENT event;
         int ch = getch(); // user input
 
         switch (ch) {
-            case KEY_MOUSE: {
-                MEVENT event;
-                if (getmouse(&event) == OK) {
-                    selectedX = event.x;
-                    selectedY = event.y;
+            case KEY_UP: {
+                if (selectedY > BORDER_SIZE) {
+                    selectedY--;
                 }
+                break;
+            }
+            case KEY_DOWN: {
+                if (selectedY < termHeight - BORDER_SIZE - 1) {
+                    selectedY++;
+                }
+                break;
+            }
+            case KEY_LEFT: {
+                if (selectedX > BORDER_SIZE) {
+                    selectedX--;
+                }
+                break;
+            }
+            case KEY_RIGHT: {
+                if (selectedX < termWidth - BORDER_SIZE - 1) {
+                    selectedX++;
+                }
+                break;
+            }
+            case 'w': {
+                grid[selectedY][selectedX] = Element::water();
+                break;
+            }
+            case 's': {
+                grid[selectedY][selectedX] = Element::sand();
+                break;
+            }
+            case 'd': {
+                grid[selectedY][selectedX] = Element::dirt();
+                break;
+            }
+            case 'f': {
+                grid[selectedY][selectedX] = Element::fire();
+                break;
+            }
+            case 'g': {
+                grid[selectedY][selectedX] = Element::grass();
+                break;
+            }
+            case 'a': {
+                grid[selectedY][selectedX] = Element::air();
+                break;
+            }
+            case 'r': {
+                grid[selectedY][selectedX] = Element::rock();
                 break;
             }
             case 'p': {
@@ -220,34 +269,6 @@ int main() {
                     renderGrid();
                 }
                 nodelay(stdscr, TRUE); // resume non-blocking input
-                break;
-            }
-            case 'w': {
-                grid[1][1] = Element::water();
-                break;
-            }
-            case 's': {
-                grid[1][1] = Element::sand();
-                break;
-            }
-            case 'd': {
-                grid[1][1] = Element::dirt();
-                break;
-            }
-            case 'f': {
-                grid[1][1] = Element::fire();
-                break;
-            }
-            case 'g': {
-                grid[1][1] = Element::grass();
-                break;
-            }
-            case 'a': {
-                grid[1][1] = Element::air();
-                break;
-            }
-            case 'r': {
-                grid[1][1] = Element::rock();
                 break;
             }
             default:

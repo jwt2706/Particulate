@@ -11,6 +11,15 @@ int selectedX = 1; // selected x coordinate
 int selectedY = 1; // selected y coordinate
 Element** grid; // global grid pointer
 
+void initColorPairs() {
+    for (int fg = 0; fg < 8; ++fg) {
+        for (int bg = 0; bg < 8; ++bg) {
+            int colorPairID = (fg + fg)*(fg + bg + 1)/2 + bg;
+            init_pair(colorPairID, fg, bg);
+        }
+    }
+}
+
 void renderGrid() {
     // draw border
     box(playwin, 0, 0);
@@ -31,7 +40,6 @@ void renderGrid() {
             int fg = grid[y][x].getFGColor();
             int bg = grid[y][x].getBGColor();
             int colorPairID = (fg + fg)*(fg + bg + 1)/2 + bg;
-            init_pair(colorPairID, grid[y][x].getFGColor(), grid[y][x].getBGColor());
 
             // apply the color pair and render the ascii char
             wattron(playwin, COLOR_PAIR(colorPairID));
@@ -186,8 +194,8 @@ int main() {
         }
     }
 
-    // create window for input
-    playwin = newwin(termHeight, termWidth, 0, 0);
+    initColorPairs(); // initialize color pairs
+    playwin = newwin(termHeight, termWidth, 0, 0); // create window for user
     renderGrid();
 
     signal(SIGWINCH, resizeHandler); // handle window resize dynamically

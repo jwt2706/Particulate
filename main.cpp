@@ -116,6 +116,7 @@ int main() {
     }
 
     // add some random elelments
+    // TODO: this should be replaced with a random generation function @jwt2706
     grid[1][1] = Element::water();
     grid[1][2] = Element::dirt();
     grid[1][3] = Element::sand();
@@ -132,10 +133,73 @@ int main() {
 
     signal(SIGWINCH, resizeHandler); // handle window resize dynamically
 
+    // essentially the same loop will be just calling the various update functions
+    // what happens is that we start at [0][0] and ask what type is it? -- air just continue
+    // dirt -- check if it can move down, 
+    // water -- check if it can move down, if not check left and right
+    // sand -- same as water (inherits from water)
+    // fire -- check isFammable on neighboring elements, if true, set to fire
+    // stone -- do nothing
+    // grass -- check neighbours (left and right) if it's dirt, if true, set to grass
+
+    // this is the logic that will be used to update the grid
+
+    // this should be contained within the game loop
     // game loop
     bool running = true;
     while (running) {
         int ch = getch(); // user input
+
+        for (int y = BORDER_SIZE; y < termHeight - BORDER_SIZE; ++y) {
+            for (int x = BORDER_SIZE; x < termWidth - BORDER_SIZE; ++x) {
+                auto element = grid[y][x];
+                if (element.getName() == "air") {
+                    continue; // air does nothing
+                } else if (element.getName() == "dirt") {
+                    // check if it can move down
+                    if (grid[y + 1][x].getName() == "air") {
+                        grid[y + 1][x] = element;
+                        // replace the dirt with air
+                        grid[y][x] = Element::air();
+                    }
+                } else if (element.getName() == "water" || element.getName() == "sand") {
+                    // check if it can move down
+                    if (grid[y + 1][x].getName() == "air") {
+                        grid[y + 1][x] = element;
+                        grid[y][x] = Element::air();
+                    } else if (grid[y][x - 1].getName() == "air") {
+                        grid[y][x - 1] = element;
+                        grid[y][x] = Element::air();
+                    } else if (grid[y][x + 1].getName() == "air") {
+                        grid[y][x + 1] = element;
+                        grid[y][x] = Element::air();
+                    }
+                } else if (element.getName() == "fire") {
+                    // check isFlammable on neighboring elements, if true, set to fire
+                } else if (element.getName() == "stone") {
+                    // do nothing
+                } else if (element.getName() == "grass") {
+                    // check neighbours (left and right) if it's dirt, if true, set to grass
+                }
+            }
+        }
+
+        // update visuals using new grid
+
+        for (int y = BORDER_SIZE; y < termHeight - BORDER_SIZE; ++y) {
+            for (int x = BORDER_SIZE; x < termWidth - BORDER_SIZE; ++x) {
+                // init color pair with unique color pair 
+                int fg = grid[y][x].getFGColor();
+                int bg = grid[y][x].getBGColor();
+                int colorPairID = (fg + fg)*(fg + bg + 1)/2 + bg;
+                init_pair(colorPairID, grid[y][x].getFGColor(), grid[y][x].getBGColor());
+
+                // apply the color pair and render the ascii char
+                wattron(playwin, COLOR_PAIR(colorPairID));
+                mvwaddch(playwin, y, x, grid[y][x].getAscii());
+                wattroff(playwin, COLOR_PAIR(colorPairID));
+            }
+        }
 
         switch (ch) {
             case 'q': {

@@ -141,6 +141,22 @@ void updateState() {
                     if (tryMove(y, x, y - 1, x - 1)) continue; // up left
                     if (tryMove(y, x, y - 1, x + 1)) continue; // up right
                 }
+
+                if (current.getName() == "water") {
+                    int dir = rand() % 3; // 0 = left, 1 = right, 2 = none
+                
+                    switch (dir) {
+                        case 0: // try to go to the left
+                            if (tryMove(y, x, y, x - 1)) continue;
+                            break;
+                        case 1: // try to go to the right
+                            if (tryMove(y, x, y, x + 1)) continue;
+                            break;
+                        case 2: // dont move
+                            break;
+                    }
+                }
+                
             }
         }
     }

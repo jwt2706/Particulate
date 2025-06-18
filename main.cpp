@@ -24,7 +24,7 @@ void renderGrid() {
     // draw border
     box(playwin, 0, 0);
     mvwprintw(playwin, 0, 2, "| Particulate v0.0.1 | Resolution: %dpx * %dpx | FPS: %d | Pause (p) |", termHeight, termWidth, fps);
-    mvwprintw(playwin, termHeight - 1, 2, "| Selected: (%d, %d) | Elements: (w)ater, (s)and, d(irt), (f)ire, (g)rass, (a)ir, r(ock) ", selectedX, selectedY);
+    mvwprintw(playwin, termHeight - 1, 2, "| Selected: (%d, %d) | Elements: (w)ater, (s)and, d(irt), (f)ire, (g)rass, (a)ir, r(ock) |", selectedX, selectedY);
 
     // render the grid of elements
     for (int y = BORDER_SIZE; y < termHeight - BORDER_SIZE; ++y) {
@@ -97,7 +97,6 @@ void resizeHandler(int sig) {
     termWidth = newWidth;
     grid = newGrid;
 
-
     // recreate the window
     playwin = newwin(termHeight, termWidth, 0, 0);
     wclear(playwin);
@@ -115,53 +114,33 @@ void updateState() {
         }
     }
 
+    // helper to handle element movement
+    auto tryMove = [&](int y, int x, int newY, int newX) {
+        if (newY >= BORDER_SIZE && newY < termHeight - BORDER_SIZE &&
+            newX >= BORDER_SIZE && newX < termWidth - BORDER_SIZE &&
+            grid[newY][newX].getDensity() < grid[y][x].getDensity()) {
+            std::swap(newGrid[y][x], newGrid[newY][newX]); // swap elements
+            return true;
+        }
+            return false;
+    };
+
     // Iterate through the grid
     for (int y = termHeight - 2; y >= BORDER_SIZE; --y) { // Bottom to top
         for (int x = BORDER_SIZE; x < termWidth - BORDER_SIZE; ++x) {
             Element& current = grid[y][x];
 
-            // Skip immovable elements
-            if (!current.isMovable()) {
-                continue;
-            }
-
-            // Gravity-based movement (falling down)
-            if (current.getGravity() > 0) {
-                // Check if the cell below is empty or less dense
-                if (y + 1 < termHeight - BORDER_SIZE && grid[y + 1][x].getDensity() < current.getDensity()) {
-                    newGrid[y + 1][x] = current;
-                    newGrid[y][x] = Element::air();
-                    continue;
+            if (current.isMovable()) {
+                // handle gravity
+                if (current.getGravity()) {
+                    if (tryMove(y, x, y + 1, x)) continue; // strait down
+                    if (tryMove(y, x, y + 1, x - 1)) continue; // down left
+                    if (tryMove(y, x, y + 1, x + 1)) continue; // down right
+                } else if (current.getGravity() < 0) {
+                    if (tryMove(y, x, y - 1, x)) continue; // strait up
+                    if (tryMove(y, x, y - 1, x - 1)) continue; // up left
+                    if (tryMove(y, x, y - 1, x + 1)) continue; // up right
                 }
-
-                // Check for diagonal movement if blocked below
-                if (y + 1 < termHeight - BORDER_SIZE) {
-                    if (x - 1 >= BORDER_SIZE && grid[y + 1][x - 1].getDensity() < current.getDensity()) {
-                        newGrid[y + 1][x - 1] = current;
-                        newGrid[y][x] = Element::air();
-                        continue;
-                    }
-                    if (x + 1 < termWidth - BORDER_SIZE && grid[y + 1][x + 1].getDensity() < current.getDensity()) {
-                        newGrid[y + 1][x + 1] = current;
-                        newGrid[y][x] = Element::air();
-                        continue;
-                    }
-                }
-            }
-
-            // Fire behavior (burning flammable elements)
-            if (current.isFlammable()) {
-                if (y + 1 < termHeight - BORDER_SIZE && grid[y + 1][x].isFlammable()) {
-                    newGrid[y + 1][x] = Element::fire();
-                }
-                if (x - 1 >= BORDER_SIZE && grid[y][x - 1].isFlammable()) {
-                    newGrid[y][x - 1] = Element::fire();
-                }
-                if (x + 1 < termWidth - BORDER_SIZE && grid[y][x + 1].isFlammable()) {
-                    newGrid[y][x + 1] = Element::fire();
-                }
-                // Fire disappears after burning
-                newGrid[y][x] = Element::air();
             }
         }
     }

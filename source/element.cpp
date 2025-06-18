@@ -2,7 +2,7 @@
 
 // default element is just air
 Element::Element() 
-    : Element("air", ' ', COLOR_WHITE, COLOR_WHITE, true, true, false, 1, 0) {}
+    : Element("air", ' ', COLOR_WHITE, COLOR_WHITE, true, true, false, 1, 1) {}
 
 Element::Element(const std::string& name, char ascii, int fgColor, int bgColor, 
                  bool movable, bool dynamic, bool flammable, int density, int gravity)
@@ -38,7 +38,7 @@ bool Element::isFlammable() const {
     return flammable;
 }
 
-int Element:: getDensity() const {
+int Element::getDensity() const {
     return density;
 }
 

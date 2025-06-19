@@ -11,6 +11,9 @@ int selectedX = 1; // selected x coordinate
 int selectedY = 1; // selected y coordinate
 Element** grid; // global grid pointer
 
+extern void saveGame(const std::string& filename);
+extern void loadGame(const std::string& filename);
+
 void initColorPairs() {
     for (int fg = 0; fg < 8; ++fg) {
         for (int bg = 0; bg < 8; ++bg) {
@@ -192,6 +195,14 @@ void updateState() {
     grid = newGrid;
 }
 
+bool confirm(const char* message) {
+    clear();
+    mvprintw(0, 0, "%s (y/n) ", message);
+    refresh();
+    int ch = getch();
+    return (ch == 'y' || ch == 'Y');
+}
+
 int main() {
     initscr();
     noecho();
@@ -287,20 +298,89 @@ int main() {
             case 'p': {
                 nodelay(stdscr, FALSE); // block until user input
                 clear();
-                mvprintw(0, 0, "Game Paused!");
-                mvprintw(1, 0, "Resume (r), Clear (c) or Quit (q)?");
-                refresh();
 
-                int confirm = getch();
-                if (confirm == 'q' || confirm == 'Q') {
-                    running = false;
-                } else if (confirm == 'r' || confirm == 'R') {
-                    renderGrid();
-                } else if (confirm == 'c' || confirm == 'C') {
-                    clearGrid();
+                const char* options[] = {
+                    "Resume Game",
+                    "Save Game",
+                    "Load Game",
+                    "Reset Game",
+                    "Quit Game"
+                };
+                const int numOptions = sizeof(options) / sizeof(options[0]);
+                int selectedOption = 0;
+
+                while (true) {
+                    clear();
+                    mvprintw(0, 0, "Game Paused! Use arrow keys to selected what you want to do.");
+                    for (int i = 0; i < numOptions; ++i) {
+                        if (i == selectedOption) {
+                            attron(A_REVERSE); // highlight selected option
+                        }
+                        mvprintw(i + 1, 0, "%s", options[i]);
+                        if (i == selectedOption) {
+                            attroff(A_REVERSE); // remove highlight
+                        }
+                    }
+                    refresh();
+
+                    int key = getch();
+                    if (key == KEY_UP) {
+                        selectedOption = (selectedOption - 1 + numOptions) % numOptions; // go up
+                    } else if (key == KEY_DOWN) {
+                        selectedOption = (selectedOption + 1) % numOptions; // go down
+                    } else if (key == '\n') {
+                        if (selectedOption == 0) {
+                            break; // resume game
+                        } else if (selectedOption == 1) {
+                            clear();
+                            mvprintw(0, 0, "Enter save slot name (e.g., save1): ");
+                            refresh();
+
+                            char saveSlot[256];
+                            echo(); // Enable user input
+                            getstr(saveSlot); // Get save slot name
+                            noecho(); // Disable user input
+
+                            saveGame(std::string(saveSlot) + ".txt"); // Save to file
+                            clear();
+                            mvprintw(0, 0, "Game saved to %s.txt", saveSlot);
+                            refresh();
+                            getch();
+                            break;
+
+                        } else if (selectedOption == 2) {
+                            clear();
+                            mvprintw(0, 0, "Enter load slot name (e.g., load1): ");
+                            refresh();
+
+                            char loadSlot[256];
+                            echo(); // Enable user input
+                            getstr(loadSlot); // Get load slot name
+                            noecho(); // Disable user input
+
+                            loadGame(std::string(loadSlot) + ".txt"); // Load from file
+                            clear();
+                            mvprintw(0, 0, "Game loaded from %s.txt", loadSlot);  
+                            refresh();
+                            getch();
+                            break;
+
+                        } else if (selectedOption == 3) {
+                            // confirm before resetting the game, if confirmed then reset the grid to air
+                            if (confirm("Are you sure you want to reset the game? Unsaved progress will be lost.")) {
+                                clearGrid();
+                            }
+                            break;
+                        } else if (selectedOption == 4) {
+                            running = false; // quit game
+                            break;
+                        }
+                    }
                 }
+
                 nodelay(stdscr, TRUE); // resume non-blocking input
                 break;
+
             }
             default:
                 break;

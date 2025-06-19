@@ -60,6 +60,16 @@ void freeGrid() {
     delete[] grid;
 }
 
+void clearGrid() {
+    // clear the grid and reset all elements to air
+    for (int y = BORDER_SIZE; y < termHeight - BORDER_SIZE; ++y) {
+        for (int x = BORDER_SIZE; x < termWidth - BORDER_SIZE; ++x) {
+            grid[y][x] = Element::air();
+        }
+    }
+    renderGrid();
+}
+
 void resizeHandler(int sig) {
     endwin();
     refresh();
@@ -142,6 +152,7 @@ void updateState() {
                     if (tryMove(y, x, y - 1, x + 1)) continue; // up right
                 }
 
+                // make water flatten out
                 if (current.getName() == "water") {
                     int dir = rand() % 3; // 0 = left, 1 = right, 2 = none
                 
@@ -154,6 +165,21 @@ void updateState() {
                             break;
                         case 2: // dont move
                             break;
+                    }
+                }
+
+                // handle fire burning
+                if (current.getName() == "fire") {
+                    for (int dy = -1; dy <= 1; ++dy) {
+                        for (int dx = -1; dx <= 1; ++dx) {
+                            int newY = y + dy;
+                            int newX = x + dx;
+                            if (newY >= BORDER_SIZE && newY < termHeight - BORDER_SIZE &&
+                                newX >= BORDER_SIZE && newX < termWidth - BORDER_SIZE &&
+                                grid[newY][newX].isFlammable()) {
+                                newGrid[newY][newX] = Element::fire(); // Turn flammable element into fire
+                            }
+                        }
                     }
                 }
                 
@@ -262,7 +288,7 @@ int main() {
                 nodelay(stdscr, FALSE); // block until user input
                 clear();
                 mvprintw(0, 0, "Game Paused!");
-                mvprintw(1, 0, "Resume (r) or Quit (q)?");
+                mvprintw(1, 0, "Resume (r), Clear (c) or Quit (q)?");
                 refresh();
 
                 int confirm = getch();
@@ -270,6 +296,8 @@ int main() {
                     running = false;
                 } else if (confirm == 'r' || confirm == 'R') {
                     renderGrid();
+                } else if (confirm == 'c' || confirm == 'C') {
+                    clearGrid();
                 }
                 nodelay(stdscr, TRUE); // resume non-blocking input
                 break;

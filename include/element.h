@@ -67,6 +67,9 @@ public:
     bool isFlammable() const;
     int getDensity() const;
     int getGravity() const;
+
+    // get element data from id
+    static Element fromId(int id);
 };
 
 #endif

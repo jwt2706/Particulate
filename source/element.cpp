@@ -49,3 +49,16 @@ int Element::getDensity() const {
 int Element::getGravity() const {
     return gravity;
 }
+
+Element Element::fromId(int id) {
+    switch (id) {
+        case 0: return Element::air();
+        case 1: return Element::water();
+        case 2: return Element::dirt();
+        case 3: return Element::sand();
+        case 4: return Element::fire();
+        case 5: return Element::rock();
+        case 6: return Element::grass();
+        default: return Element(); // default to air if unknown id
+    }
+}

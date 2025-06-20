@@ -35,6 +35,34 @@ void saveGame(const std::string& filename) {
 // load the grid state from a file
 void loadGame(const std::string& filename) {
     clear();
+    
+    std::ifstream file(saveFolder + filename);
+    if (!file.is_open()) {
+        std::cerr << "Error opening file for loading: " << filename << std::endl;
+        return;
+    }
 
-    //
+    // read terminal dimensions
+    file >> termHeight >> termWidth;
+
+    // free the old grid memory
+    freeGrid();
+
+    // create a new grid with the right dimensions
+    grid = new Element*[termHeight];
+    for (int i = 0; i < termHeight; ++i) {
+        grid[i] = new Element[termWidth];
+    }
+
+    // read element data onto grid
+    for (int y = 0; y < termHeight; ++y) {
+        for (int x = 0; x < termWidth; ++x) {
+            int id;
+            file >> id;
+            grid[y][x] = Element::fromId(id); // create element from id
+        }
+    }
+
+    file.close();
+    std::cout << "Game loaded from " << filename << std::endl;
 }

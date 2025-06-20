@@ -221,13 +221,12 @@ int main() {
                         mvprintw(0, 0, "No save files found. Go create one!");
                         refresh();
                         getch();
-                        break;
-                    }
-                    int selectedFileIndex = menu("Select a save file to load:", saveFiles);
+                    } else {
+                        int selectedFileIndex = menu("Select a save file to load:", saveFiles);
 
-                    if (confirm("Are you sure you want to load this game? Unsaved progress will be lost.")) {
-                        loadGame(saveFolder + saveFiles[selectedFileIndex]);
-                        break;
+                        if (confirm("Are you sure you want to load this game? Unsaved progress will be lost.")) {
+                            loadGame(saveFiles[selectedFileIndex]);
+                        }
                     }
 
                 } else if (selectedOption == 3) {

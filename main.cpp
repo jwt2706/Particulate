@@ -1,95 +1,79 @@
+#include <filesystem>
+#include <vector>
+#include <string>
+#include <iostream>
+#include <time.h>
 #include <signal.h>
 #include <ncurses.h>
+#include "include/globals.h"
 #include "include/element.h"
+#include "include/grid.h"
+#include "include/save.h"
 
-int BORDER_SIZE = 1;
-WINDOW* playwin; // global window pointer
-int termHeight, termWidth; // global terminal dimensions
-Element** grid; // global grid pointer
-
-void renderFullGrid() {
-    // draw border
-    box(playwin, 0, 0);
-    mvwprintw(playwin, 0, 2, " Particulate | %dpx * %dpx | Press 'q' to quit ", termHeight, termWidth);
-
-    // render the grid of elements
-    for (int y = BORDER_SIZE; y < termHeight - BORDER_SIZE; ++y) {
-        for (int x = BORDER_SIZE; x < termWidth - BORDER_SIZE; ++x) {
-            // init color pair with unique color pair ID (using cantoring pairing function)
-            int fg = grid[y][x].getFGColor();
-            int bg = grid[y][x].getBGColor();
+void initColorPairs() {
+    for (int fg = 0; fg < 8; ++fg) {
+        for (int bg = 0; bg < 8; ++bg) {
             int colorPairID = (fg + fg)*(fg + bg + 1)/2 + bg;
-            init_pair(colorPairID, grid[y][x].getFGColor(), grid[y][x].getBGColor());
-
-            // apply the color pair and render the ascii char
-            wattron(playwin, COLOR_PAIR(colorPairID));
-            mvwaddch(playwin, y, x, grid[y][x].getAscii());
-            wattroff(playwin, COLOR_PAIR(colorPairID));
+            init_pair(colorPairID, fg, bg);
         }
     }
-
-    // refresh the window to display the changes
-    wrefresh(playwin);
 }
 
-void freeGrid() {
-    // free the grid memory
-    for (int i = 0; i < termHeight; ++i) {
-        delete[] grid[i];
-    }
-    delete[] grid;
-}
+int menu(const char* msg, const std::vector<std::string>& options) {
+    int selected = 0;
+    int numOptions = options.size();
 
-void resizeHandler(int sig) {
-    // this is mostly temporary, and should keep the existing elements and react to the termial resizing
-    // instead of getting deleted and replaced
-
-    endwin();
-    refresh();
-    resize_term(0, 0);
-    int newHeight, newWidth;
-    getmaxyx(stdscr, newHeight, newWidth); // get new terminal dimensions
-
-    // Create a new grid with updated dimensions
-    Element** newGrid = new Element*[newHeight];
-    for (int i = 0; i < newHeight; ++i) {
-        newGrid[i] = new Element[newWidth];
-    }
-
-    // Copy existing elements to the new grid
-    for (int y = BORDER_SIZE; y < std::min(termHeight, newHeight) - BORDER_SIZE; ++y) {
-        for (int x = BORDER_SIZE; x < std::min(termWidth, newWidth) - BORDER_SIZE; ++x) {
-            newGrid[y][x] = grid[y][x];
-        }
-    }
-
-    // Initialize new cells with air
-    for (int y = BORDER_SIZE; y < newHeight - BORDER_SIZE; ++y) {
-        for (int x = BORDER_SIZE; x < newWidth - BORDER_SIZE; ++x) {
-            if (y >= termHeight || x >= termWidth) {
-                newGrid[y][x] = Element::air();
+    while (true) {
+        clear();
+        mvprintw(0, 0, "%s", msg);
+        for (int i = 0; i < numOptions; ++i) {
+            if (i == selected) {
+                attron(A_REVERSE); // highlight selected option
+            }
+            mvprintw(i + 1, 0, "%s", options[i].c_str());
+            if (i == selected) {
+                attroff(A_REVERSE); // remove highlight when unselected
             }
         }
+        refresh();
+
+        int key = getch();
+        if (key == KEY_UP) {
+            selected = (selected - 1 + numOptions) % numOptions; // go up
+        } else if (key == KEY_DOWN) {
+            selected = (selected + 1) % numOptions; // go down
+        } else if (key == '\n') {
+            return selected; // return selected option index
+        }
     }
-
-    // Free the old grid memory
-    freeGrid();
-
-    // Update global variables and grid pointer
-    termHeight = newHeight;
-    termWidth = newWidth;
-    grid = newGrid;
-
-
-    // recreate the window
-    playwin = newwin(termHeight, termWidth, 0, 0);
-    wclear(playwin);
-    wresize(playwin, termHeight, termWidth);
-    renderFullGrid();
 }
 
-void updateGrid() {
-    return;
+std::vector<std::string> getSaveFiles() {
+    std::vector<std::string> saveFiles;
+    const std::string saveFolder = "saves";
+
+    // check if the folder exists
+    if (!std::filesystem::exists(saveFolder)) {
+        std::cerr << "Save folder does not exist." << std::endl;
+        return saveFiles;
+    }
+
+    // iterate through the files in the saves folder and return the names
+    for (const auto& entry : std::filesystem::directory_iterator(saveFolder)) {
+        if (entry.is_regular_file()) {
+            saveFiles.push_back(entry.path().filename().string());
+        }
+    }
+
+    return saveFiles;
+}
+
+bool confirm(const char* message) {
+    clear();
+    mvprintw(0, 0, "%s (y/n) ", message);
+    refresh();
+    int ch = getch();
+    return (ch == 'y' || ch == 'Y');
 }
 
 int main() {
@@ -97,7 +81,7 @@ int main() {
     noecho();
     curs_set(0);
     cbreak(); // allow instant key input
-    refresh();
+    keypad(stdscr, TRUE); // enable special keys (like arrow keys)
     start_color();
 
 	// get screen demensions
@@ -115,46 +99,157 @@ int main() {
         }
     }
 
-    // add some random elelments
-    grid[1][1] = Element::water();
-    grid[1][2] = Element::dirt();
-    grid[1][3] = Element::sand();
-    grid[1][4] = Element::fire();
-    grid[1][5] = Element::stone();
-    grid[1][6] = Element::grass();
+    initColorPairs(); // initialize color pairs
+    playwin = newwin(termHeight, termWidth, 0, 0); // create window for user
+    renderGrid();
 
-    grid[4][1] = Element::dirt();
-    grid[3][1] = Element::grass();
-
-    // create window for input
-    playwin = newwin(termHeight, termWidth, 0, 0);
-    renderFullGrid();
-
-    signal(SIGWINCH, resizeHandler); // handle window resize dynamically
+    signal(SIGWINCH, resizeGrid); // handle window resize dynamically
 
     // game loop
     bool running = true;
+    struct timespec ts;
+    ts.tv_sec = 0;
+    ts.tv_nsec = 1000000000 / fps; // set the frame rate
+    nodelay(stdscr, TRUE); // makes getch() non-blocking
     while (running) {
+        MEVENT event;
         int ch = getch(); // user input
 
         switch (ch) {
-            case 'q': {
-                clear();
-                mvprintw(0, 0, "Do you really want to quit? (y/n)");
-                refresh();
-
-                int confirm = getch();
-                if (confirm == 'y' || confirm == 'Y') {
-                    running = false;
-                } else if (confirm == 'n' || confirm == 'N') {
-                    renderFullGrid();
+            case KEY_UP: {
+                if (selectedY > BORDER_SIZE) {
+                    selectedY--;
                 }
                 break;
+            }
+            case KEY_DOWN: {
+                if (selectedY < termHeight - BORDER_SIZE - 1) {
+                    selectedY++;
+                }
+                break;
+            }
+            case KEY_LEFT: {
+                if (selectedX > BORDER_SIZE) {
+                    selectedX--;
+                }
+                break;
+            }
+            case KEY_RIGHT: {
+                if (selectedX < termWidth - BORDER_SIZE - 1) {
+                    selectedX++;
+                }
+                break;
+            }
+            case 'w': {
+                grid[selectedY][selectedX] = Element::water();
+                break;
+            }
+            case 's': {
+                grid[selectedY][selectedX] = Element::sand();
+                break;
+            }
+            case 'd': {
+                grid[selectedY][selectedX] = Element::dirt();
+                break;
+            }
+            case 'f': {
+                grid[selectedY][selectedX] = Element::fire();
+                break;
+            }
+            case 'g': {
+                grid[selectedY][selectedX] = Element::grass();
+                break;
+            }
+            case 'a': {
+                grid[selectedY][selectedX] = Element::air();
+                break;
+            }
+            case 'r': {
+                grid[selectedY][selectedX] = Element::rock();
+                break;
+            }
+            case 'p': {
+                nodelay(stdscr, FALSE); // block until user input
+                clear();
 
+                std::vector<std::string> options = {
+                    "Resume Game",
+                    "Save Game",
+                    "Load Game",
+                    "Reset Game",
+                    "Quit Game"
+                };
+                int selectedOption = menu("Game Paused. Select an option:", options);
+                        
+                if (selectedOption == 0) {
+                    break; // resume game
+                } else if (selectedOption == 1) {
+                    clear();
+
+                    std::vector<std::string> saveFiles = getSaveFiles();
+                    saveFiles.push_back("+ Create New Save");
+
+                    int selectedFileIndex = menu("Select a save slot:", saveFiles);
+
+                    if (selectedFileIndex == saveFiles.size() - 1) {
+                        // User chose to create a new save
+                        clear();
+                        mvprintw(0, 0, "Enter save slot name (if it already exitst, it will overwrite): ");
+                        refresh();
+
+                        char saveSlot[256];
+                        echo(); // Enable user input
+                        getstr(saveSlot); // Get save slot name
+                        noecho(); // Disable user input
+
+                        saveGame(std::string(saveSlot) + ".txt"); // Save to file
+                        clear();
+                        mvprintw(0, 0, "Game saved to %s.txt", saveSlot);
+                        refresh();
+                    } else {
+                        saveGame(saveFiles[selectedFileIndex]); // Save to selected file
+                        clear();
+                        mvprintw(0, 0, "Game saved to %s", saveFiles[selectedFileIndex].c_str());
+                        refresh();
+                    }
+
+                } else if (selectedOption == 2) {
+                    clear();
+
+                    std::vector<std::string> saveFiles = getSaveFiles();
+                    if (saveFiles.empty()) {
+                        mvprintw(0, 0, "No save files found. Go create one!");
+                        refresh();
+                        getch();
+                    } else {
+                        int selectedFileIndex = menu("Select a save file to load:", saveFiles);
+
+                        if (confirm("Are you sure you want to load this game? Unsaved progress will be lost.")) {
+                            loadGame(saveFiles[selectedFileIndex]);
+                        }
+                    }
+
+                } else if (selectedOption == 3) {
+                    // confirm before resetting the game, if confirmed then reset the grid to air
+                    if (confirm("Are you sure you want to reset the game? Unsaved progress will be lost.")) {
+                        clearGrid();
+                    }
+                    break;
+                } else if (selectedOption == 4) {
+                    running = false; // quit game
+                    break;
+                }
+
+                nodelay(stdscr, TRUE); // resume non-blocking input
+                break;
             }
             default:
                 break;
         }
+
+        updateGrid();
+        renderGrid();
+        nanosleep(&ts, NULL); // sleep for the specified time to control the frame rate
     }
 
     freeGrid();

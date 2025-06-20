@@ -123,14 +123,13 @@ void updateGrid() {
 
             if (current.isMovable()) {
                 // handle gravity
-                if (current.getGravity()) {
+                if (current.getGravity() > 0) {
                     if (tryMove(y, x, y + 1, x)) continue; // strait down
-                    if (tryMove(y, x, y + 1, x - 1)) continue; // down left
-                    if (tryMove(y, x, y + 1, x + 1)) continue; // down right
-                } else if (current.getGravity() < 0) {
-                    if (tryMove(y, x, y - 1, x)) continue; // strait up
-                    if (tryMove(y, x, y - 1, x - 1)) continue; // up left
-                    if (tryMove(y, x, y - 1, x + 1)) continue; // up right
+                    
+                    if (current.getGravity() > 1) {
+                        if (tryMove(y, x, y + 1, x - 1)) continue; // down left
+                        if (tryMove(y, x, y + 1, x + 1)) continue; // down right
+                    }
                 }
 
                 // make water flatten out
@@ -151,6 +150,8 @@ void updateGrid() {
 
                 // handle fire burning
                 if (current.getName() == "fire") {
+                    bool burnOut = true;
+
                     for (int dy = -1; dy <= 1; ++dy) {
                         for (int dx = -1; dx <= 1; ++dx) {
                             int newY = y + dy;
@@ -159,8 +160,13 @@ void updateGrid() {
                                 newX >= BORDER_SIZE && newX < termWidth - BORDER_SIZE &&
                                 grid[newY][newX].isFlammable()) {
                                 newGrid[newY][newX] = Element::fire(); // Turn flammable element into fire
+                                burnOut = true;
                             }
                         }
+                    }
+
+                    if (burnOut) {
+                        newGrid[y][x] = Element::air(); // Burn out the fire
                     }
                 }
                 

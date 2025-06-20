@@ -33,7 +33,7 @@ public:
     }
 
     static Element water() {
-        return Element(1, "water", '~', COLOR_BLUE, COLOR_BLACK, true, false, true, 3, 1);
+        return Element(1, "water", '~', COLOR_BLUE, COLOR_BLACK, true, false, false, 3, 2);
     }
 
     static Element dirt() {
@@ -41,11 +41,11 @@ public:
     }
 
     static Element sand() {
-        return Element(3, "sand", '%', COLOR_YELLOW, COLOR_BLACK, true, true, false, 8, 1);
+        return Element(3, "sand", '%', COLOR_YELLOW, COLOR_BLACK, true, true, false, 8, 2);
     }
 
     static Element fire() {
-        return Element(4, "fire", '*', COLOR_RED, COLOR_BLACK, true, false, true, 0, 1);
+        return Element(4, "fire", '*', COLOR_RED, COLOR_BLACK, true, false, false, 0, -2);
     }
 
     static Element rock() {
@@ -53,7 +53,7 @@ public:
     }
 
     static Element grass() {
-        return Element(6, "grass", '_', COLOR_GREEN, COLOR_BLACK, true, false, false, 7, 1);
+        return Element(6, "grass", '_', COLOR_GREEN, COLOR_BLACK, true, false, true, 7, 2);
     }
 
     // accessor methods

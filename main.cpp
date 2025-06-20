@@ -185,20 +185,33 @@ int main() {
                     break; // resume game
                 } else if (selectedOption == 1) {
                     clear();
-                    mvprintw(0, 0, "Enter save slot name (e.g., save1): ");
-                    refresh();
 
-                    char saveSlot[256];
-                    echo(); // Enable user input
-                    getstr(saveSlot); // Get save slot name
-                    noecho(); // Disable user input
+                    std::vector<std::string> saveFiles = getSaveFiles();
+                    saveFiles.push_back("+ Create New Save");
 
-                    saveGame(std::string(saveSlot) + ".txt"); // Save to file
-                    clear();
-                    mvprintw(0, 0, "Game saved to %s.txt", saveSlot);
-                    refresh();
-                    getch();
-                    break;
+                    int selectedFileIndex = menu("Select a save slot:", saveFiles);
+
+                    if (selectedFileIndex == saveFiles.size() - 1) {
+                        // User chose to create a new save
+                        clear();
+                        mvprintw(0, 0, "Enter save slot name (if it already exitst, it will overwrite): ");
+                        refresh();
+
+                        char saveSlot[256];
+                        echo(); // Enable user input
+                        getstr(saveSlot); // Get save slot name
+                        noecho(); // Disable user input
+
+                        saveGame(std::string(saveSlot) + ".txt"); // Save to file
+                        clear();
+                        mvprintw(0, 0, "Game saved to %s.txt", saveSlot);
+                        refresh();
+                    } else {
+                        saveGame(saveFiles[selectedFileIndex]); // Save to selected file
+                        clear();
+                        mvprintw(0, 0, "Game saved to %s", saveFiles[selectedFileIndex].c_str());
+                        refresh();
+                    }
 
                 } else if (selectedOption == 2) {
                     clear();
@@ -210,15 +223,12 @@ int main() {
                         getch();
                         break;
                     }
-                    int selectedFile = menu("Select a save file to load:", saveFiles);
-                    
-                    char loadSlot[256];
-                    echo(); // Enable user input
-                    getstr(loadSlot); // Get load slot name
-                    noecho(); // Disable user input
+                    int selectedFileIndex = menu("Select a save file to load:", saveFiles);
 
-                    loadGame(std::string(loadSlot)); // Load from file
-                    break;
+                    if (confirm("Are you sure you want to load this game? Unsaved progress will be lost.")) {
+                        loadGame(saveFolder + saveFiles[selectedFileIndex]);
+                        break;
+                    }
 
                 } else if (selectedOption == 3) {
                     // confirm before resetting the game, if confirmed then reset the grid to air

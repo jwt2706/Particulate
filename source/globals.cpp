@@ -6,3 +6,4 @@ int fps = 15;
 int termHeight = 0, termWidth = 0;
 int selectedX = 1, selectedY = 1;
 Element** grid = nullptr;
+std::string saveFolder = "saves/";

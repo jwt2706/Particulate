@@ -1,6 +1,7 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
+#include <string>
 #include <ncurses.h>
 #include "element.h"
 
@@ -11,5 +12,6 @@ extern int fps;
 extern int termHeight, termWidth;
 extern int selectedX, selectedY;
 extern Element** grid;
+extern std::string saveFolder;
 
 #endif // GLOBALS_H

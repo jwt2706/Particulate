@@ -66,3 +66,23 @@ void loadGame(const std::string& filename) {
     file.close();
     std::cout << "Game loaded from " << filename << std::endl;
 }
+
+std::vector<std::string> getSaveFiles() {
+    std::vector<std::string> saveFiles;
+    const std::string saveFolder = "saves";
+
+    // check if the folder exists
+    if (!std::filesystem::exists(saveFolder)) {
+        std::cerr << "Save folder does not exist." << std::endl;
+        return saveFiles;
+    }
+
+    // iterate through the files in the saves folder and return the names
+    for (const auto& entry : std::filesystem::directory_iterator(saveFolder)) {
+        if (entry.is_regular_file()) {
+            saveFiles.push_back(entry.path().filename().string());
+        }
+    }
+
+    return saveFiles;
+}

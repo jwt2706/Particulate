@@ -25,7 +25,11 @@ int menu(const char* msg, const std::vector<std::string>& options) {
 
     while (true) {
         clear();
+
+        attron(A_BOLD);
         mvprintw(0, 0, "%s", msg);
+        attroff(A_BOLD);
+
         for (int i = 0; i < numOptions; ++i) {
             if (i == selected) {
                 attron(A_REVERSE); // highlight selected option
@@ -48,26 +52,6 @@ int menu(const char* msg, const std::vector<std::string>& options) {
     }
 }
 
-std::vector<std::string> getSaveFiles() {
-    std::vector<std::string> saveFiles;
-    const std::string saveFolder = "saves";
-
-    // check if the folder exists
-    if (!std::filesystem::exists(saveFolder)) {
-        std::cerr << "Save folder does not exist." << std::endl;
-        return saveFiles;
-    }
-
-    // iterate through the files in the saves folder and return the names
-    for (const auto& entry : std::filesystem::directory_iterator(saveFolder)) {
-        if (entry.is_regular_file()) {
-            saveFiles.push_back(entry.path().filename().string());
-        }
-    }
-
-    return saveFiles;
-}
-
 bool confirm(const char* message) {
     clear();
     mvprintw(0, 0, "%s (y/n) ", message);
@@ -82,6 +66,7 @@ int main() {
     curs_set(0);
     cbreak(); // allow instant key input
     keypad(stdscr, TRUE); // enable special keys (like arrow keys)
+    nodelay(stdscr, TRUE); // makes getch() non-blocking
     start_color();
 
 	// get screen demensions
@@ -110,7 +95,6 @@ int main() {
     struct timespec ts;
     ts.tv_sec = 0;
     ts.tv_nsec = 1000000000 / fps; // set the frame rate
-    nodelay(stdscr, TRUE); // makes getch() non-blocking
     while (running) {
         MEVENT event;
         int ch = getch(); // user input
@@ -169,7 +153,6 @@ int main() {
                 break;
             }
             case 'p': {
-                nodelay(stdscr, FALSE); // block until user input
                 clear();
 
                 std::vector<std::string> options = {
@@ -181,9 +164,10 @@ int main() {
                 };
                 int selectedOption = menu("Game Paused. Select an option:", options);
                         
-                if (selectedOption == 0) {
-                    break; // resume game
-                } else if (selectedOption == 1) {
+                if (selectedOption == 0) { // resume game
+                    break;
+
+                } else if (selectedOption == 1) { // save game
                     clear();
 
                     std::vector<std::string> saveFiles = getSaveFiles();
@@ -212,8 +196,9 @@ int main() {
                         mvprintw(0, 0, "Game saved to %s", saveFiles[selectedFileIndex].c_str());
                         refresh();
                     }
+                    break;
 
-                } else if (selectedOption == 2) {
+                } else if (selectedOption == 2) { // load game
                     clear();
 
                     std::vector<std::string> saveFiles = getSaveFiles();
@@ -228,19 +213,20 @@ int main() {
                             loadGame(saveFiles[selectedFileIndex]);
                         }
                     }
+                    break;
 
-                } else if (selectedOption == 3) {
+                } else if (selectedOption == 3) { // reset game
                     // confirm before resetting the game, if confirmed then reset the grid to air
                     if (confirm("Are you sure you want to reset the game? Unsaved progress will be lost.")) {
                         clearGrid();
                     }
                     break;
-                } else if (selectedOption == 4) {
-                    running = false; // quit game
-                    break;
-                }
 
-                nodelay(stdscr, TRUE); // resume non-blocking input
+                } else if (selectedOption == 4) { // quit game
+                    running = false;
+                    break;
+
+                }
                 break;
             }
             default:

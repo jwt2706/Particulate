@@ -9,6 +9,7 @@
 #include "include/element.h"
 #include "include/grid.h"
 #include "include/save.h"
+#include "include/menu.h"
 
 void initColorPairs() {
     for (int fg = 0; fg < 8; ++fg) {
@@ -17,47 +18,6 @@ void initColorPairs() {
             init_pair(colorPairID, fg, bg);
         }
     }
-}
-
-int menu(const char* msg, const std::vector<std::string>& options) {
-    int selected = 0;
-    int numOptions = options.size();
-
-    while (true) {
-        clear();
-
-        attron(A_BOLD);
-        mvprintw(0, 0, "%s", msg);
-        attroff(A_BOLD);
-
-        for (int i = 0; i < numOptions; ++i) {
-            if (i == selected) {
-                attron(A_REVERSE); // highlight selected option
-            }
-            mvprintw(i + 1, 0, "%s", options[i].c_str());
-            if (i == selected) {
-                attroff(A_REVERSE); // remove highlight when unselected
-            }
-        }
-        refresh();
-
-        int key = getch();
-        if (key == KEY_UP) {
-            selected = (selected - 1 + numOptions) % numOptions; // go up
-        } else if (key == KEY_DOWN) {
-            selected = (selected + 1) % numOptions; // go down
-        } else if (key == '\n') {
-            return selected; // return selected option index
-        }
-    }
-}
-
-bool confirm(const char* message) {
-    clear();
-    mvprintw(0, 0, "%s (y/n) ", message);
-    refresh();
-    int ch = getch();
-    return (ch == 'y' || ch == 'Y');
 }
 
 int main() {
@@ -209,7 +169,7 @@ int main() {
                     } else {
                         int selectedFileIndex = menu("Select a save file to load:", saveFiles);
 
-                        if (confirm("Are you sure you want to load this game? Unsaved progress will be lost.")) {
+                        if (confirm("Are you sure you want to load this game? All unsaved progress will be lost.")) {
                             loadGame(saveFiles[selectedFileIndex]);
                         }
                     }

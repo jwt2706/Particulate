@@ -25,6 +25,7 @@ int main() {
     noecho();
     curs_set(0);
     cbreak(); // allow instant key input
+    set_escdelay(0); // disable escape delay
     keypad(stdscr, TRUE); // enable special keys (like arrow keys)
     nodelay(stdscr, TRUE); // makes getch() non-blocking
     start_color();
@@ -112,81 +113,9 @@ int main() {
                 grid[selectedY][selectedX] = Element::rock();
                 break;
             }
-            case 'p': {
-                clear();
-
-                std::vector<std::string> options = {
-                    "Resume Game",
-                    "Save Game",
-                    "Load Game",
-                    "Reset Game",
-                    "Quit Game"
-                };
-                int selectedOption = menu("Game Paused. Select an option:", options);
-                        
-                if (selectedOption == 0) { // resume game
-                    break;
-
-                } else if (selectedOption == 1) { // save game
-                    clear();
-
-                    std::vector<std::string> saveFiles = getSaveFiles();
-                    saveFiles.push_back("+ Create New Save");
-
-                    int selectedFileIndex = menu("Select a save slot:", saveFiles);
-
-                    if (selectedFileIndex == saveFiles.size() - 1) {
-                        // User chose to create a new save
-                        clear();
-                        mvprintw(0, 0, "Enter save slot name (if it already exitst, it will overwrite): ");
-                        refresh();
-
-                        char saveSlot[256];
-                        echo(); // Enable user input
-                        getstr(saveSlot); // Get save slot name
-                        noecho(); // Disable user input
-
-                        saveGame(std::string(saveSlot) + ".txt"); // Save to file
-                        clear();
-                        mvprintw(0, 0, "Game saved to %s.txt", saveSlot);
-                        refresh();
-                    } else {
-                        saveGame(saveFiles[selectedFileIndex]); // Save to selected file
-                        clear();
-                        mvprintw(0, 0, "Game saved to %s", saveFiles[selectedFileIndex].c_str());
-                        refresh();
-                    }
-                    break;
-
-                } else if (selectedOption == 2) { // load game
-                    clear();
-
-                    std::vector<std::string> saveFiles = getSaveFiles();
-                    if (saveFiles.empty()) {
-                        mvprintw(0, 0, "No save files found. Go create one!");
-                        refresh();
-                        getch();
-                    } else {
-                        int selectedFileIndex = menu("Select a save file to load:", saveFiles);
-
-                        if (confirm("Are you sure you want to load this game? All unsaved progress will be lost.")) {
-                            loadGame(saveFiles[selectedFileIndex]);
-                        }
-                    }
-                    break;
-
-                } else if (selectedOption == 3) { // reset game
-                    // confirm before resetting the game, if confirmed then reset the grid to air
-                    if (confirm("Are you sure you want to reset the game? Unsaved progress will be lost.")) {
-                        clearGrid();
-                    }
-                    break;
-
-                } else if (selectedOption == 4) { // quit game
-                    running = false;
-                    break;
-
-                }
+            case 'p' :
+            case 27: { // 'p' or ESC to pause the game
+                running = mainMenu(); // will return false if the user wants to quit the game
                 break;
             }
             default:

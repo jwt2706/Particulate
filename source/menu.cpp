@@ -42,6 +42,22 @@ int menu(const char* msg, const std::vector<std::string>& options) {
 }
 
 bool confirm(const char* question, const char* message) {
+    int answer = menu(question, {"Yes", "No"});
+    if (answer == 0) { // user confirmed
+        nodelay(stdscr, FALSE); // block until user confirms (or doesn't)
+        if (message) {
+            clear();
+            mvprintw(0, 0, "%s Press any key to continue.", message);
+            refresh();
+            getch(); // wait for user to acknowledge
+        }
+        nodelay(stdscr, TRUE); // resume non-blocking
+        return true;
+    }
+    return false; // user declined
+
+
+    /*
     nodelay(stdscr, FALSE); // block until user confirms (or doesn't)
     clear();
     mvprintw(0, 0, "%s (y/n) ", question);
@@ -61,6 +77,7 @@ bool confirm(const char* question, const char* message) {
     }
     nodelay(stdscr, TRUE); // resume non-blocking
     return false;
+    */
 }
 
 bool mainMenu() {
@@ -97,6 +114,8 @@ void newMenu() {
 
     if (confirm("Are you sure you want to reset the game? Unsaved progress will be lost.")) {
         clearGrid();
+    } else {
+        mainMenu();
     }
 }
 

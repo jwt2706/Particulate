@@ -56,6 +56,7 @@ int main() {
     struct timespec ts;
     ts.tv_sec = 0;
     ts.tv_nsec = 1000000000 / fps; // set the frame rate
+    mainMenu();
     while (running) {
         MEVENT event;
         int ch = getch(); // user input

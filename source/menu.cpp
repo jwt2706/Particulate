@@ -4,6 +4,7 @@
 #include "../include/menu.h"
 #include "../include/save.h"
 #include "../include/grid.h"
+#include "../include/generate.h"
 
 int menu(const char* msg, const std::vector<std::string>& options) {
     int selected = 0;
@@ -55,29 +56,6 @@ bool confirm(const char* question, const char* message) {
         return true;
     }
     return false; // user declined
-
-
-    /*
-    nodelay(stdscr, FALSE); // block until user confirms (or doesn't)
-    clear();
-    mvprintw(0, 0, "%s (y/n) ", question);
-    refresh();
-    int ch = getch();
-
-    if (ch == 'y' || ch == 'Y') {
-        if (message) {
-            clear();
-            mvprintw(0, 0, "%s Press any key to continue.", message);
-            refresh();
-            getch(); // wait for user to acknowledge
-        }
-        nodelay(stdscr, TRUE); // resume non-blocking
-
-        return true;
-    }
-    nodelay(stdscr, TRUE); // resume non-blocking
-    return false;
-    */
 }
 
 bool mainMenu() {
@@ -90,7 +68,7 @@ bool mainMenu() {
         "Load Game",
         "Quit Game"
     };
-    int selectedOption = menu("Game Paused. Select an option:", options);
+    int selectedOption = menu("Game Menu. Select an option:", options);
             
     if (selectedOption == 0) { // resume game
         ; // return to game
@@ -110,12 +88,25 @@ bool mainMenu() {
 }
 
 void newMenu() {
-    // confirm before resetting the game, if confirmed then reset the grid to air
 
-    if (confirm("Are you sure you want to reset the game? Unsaved progress will be lost.")) {
-        clearGrid();
+    std::vector<std::string> options = {
+        "Empty Map",
+        "Generate Random Map",
+    };
+
+    int selectedOption = menu("Select a new game type:", options);
+
+    if (confirm("Are you sure you want to start a new game? Any unsaved progress will be lost.")) {
+        if (selectedOption == 0) { // empty map
+            clearGrid();
+        } else if (selectedOption == 1) { // generate map
+            clearGrid();
+            generateMap();
+        } else {
+            mainMenu(); // return to main menu if no valid option selected
+        }
     } else {
-        mainMenu();
+        mainMenu(); // return to main menu if user declined
     }
 }
 

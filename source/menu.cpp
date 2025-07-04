@@ -73,19 +73,21 @@ void splashMenu() {
         "|_|   \\__,_|_|   \\__|_|\\___|\\__,_|_|\\__,_|\\__\\___|"
     };
 
+    int numLines = sizeof(asciiArt) / sizeof(asciiArt[0]);
+    int startHeight = ((termHeight - numLines) / 2) - 3;
+
     // display ascii art, centered
     attron(A_BOLD);
-    int numLines = sizeof(asciiArt) / sizeof(asciiArt[0]);
     for (int i = 0; i < numLines; ++i) {
         // apply the color pair and render the ascii char
         int colorPairID = getColorPairID(i, COLOR_BLACK);
         attron(COLOR_PAIR(colorPairID));
-        mvprintw(2 + i, (termWidth - strlen(asciiArt[i])) / 2, "%s", asciiArt[i]);
+        mvprintw(startHeight + i, (termWidth - strlen(asciiArt[i])) / 2, "%s", asciiArt[i]);
         attroff(COLOR_PAIR(colorPairID));
     }
     attroff(A_BOLD);
-    mvprintw(9, (termWidth - strlen(asciiArt[5])) / 2, "Developed by %s                        %s", authors, version);
-    mvprintw(12, (termWidth - 38) / 2, "Press any key to start the game...");
+    mvprintw(startHeight + numLines, (termWidth - strlen(asciiArt[5])) / 2, "Developed by %s                        %s", authors, version);
+    mvprintw(startHeight + numLines + 2, (termWidth - 25) / 2, "Press any key to continue...");
     refresh();
 
     // wait for user input

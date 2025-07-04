@@ -6,6 +6,8 @@
 #include "element.h"
 
 // global variables
+extern const char* version;
+extern const char* authors;
 extern int BORDER_SIZE;
 extern WINDOW* playwin;
 extern int fps;

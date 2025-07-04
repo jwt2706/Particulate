@@ -21,7 +21,7 @@ void generateMap() {
                     grid[y][x] = Element::water();
                     break;
                 case 2:
-                    grid[y][x] = Element::fire();
+                    grid[y][x] = Element::grass();
                     break;
                 case 3:
                     grid[y][x] = Element::sand();

@@ -10,15 +10,7 @@
 #include "include/grid.h"
 #include "include/save.h"
 #include "include/menu.h"
-
-void initColorPairs() {
-    for (int fg = 0; fg < 8; ++fg) {
-        for (int bg = 0; bg < 8; ++bg) {
-            int colorPairID = (fg + fg)*(fg + bg + 1)/2 + bg;
-            init_pair(colorPairID, fg, bg);
-        }
-    }
-}
+#include "include/color.h"
 
 int main() {
     initscr();
@@ -48,15 +40,14 @@ int main() {
     initColorPairs(); // initialize color pairs
     playwin = newwin(termHeight, termWidth, 0, 0); // create window for user
     renderGrid();
-
     signal(SIGWINCH, resizeGrid); // handle window resize dynamically
+    splashMenu();
 
     // game loop
     bool running = true;
     struct timespec ts;
     ts.tv_sec = 0;
     ts.tv_nsec = 1000000000 / fps; // set the frame rate
-    mainMenu();
     while (running) {
         MEVENT event;
         int ch = getch(); // user input

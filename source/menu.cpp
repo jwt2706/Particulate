@@ -4,7 +4,9 @@
 #include "../include/menu.h"
 #include "../include/save.h"
 #include "../include/grid.h"
+#include "../include/globals.h"
 #include "../include/generate.h"
+#include "../include/color.h"
 
 int menu(const char* msg, const std::vector<std::string>& options) {
     int selected = 0;
@@ -56,6 +58,40 @@ bool confirm(const char* question, const char* message) {
         return true;
     }
     return false; // user declined
+}
+
+void splashMenu() {
+    clear();
+
+    const char* asciiArt[] = {
+        "Welcome to                                        ",
+        " _____           _   _            _       _       ",
+        "|  __ \\         | | (_)          | |     | |      ",
+        "| |__) |_ _ _ __| |_ _  ___ _   _| | __ _| |_ ___ ",
+        "|  ___/ _` | '__| __| |/ __| | | | |/ _` | __/ _ \\",
+        "| |  | (_| | |  | |_| | (__| |_| | | (_| | ||  __/",
+        "|_|   \\__,_|_|   \\__|_|\\___|\\__,_|_|\\__,_|\\__\\___|"
+    };
+
+    // display ascii art, centered
+    attron(A_BOLD);
+    int numLines = sizeof(asciiArt) / sizeof(asciiArt[0]);
+    for (int i = 0; i < numLines; ++i) {
+        // apply the color pair and render the ascii char
+        int colorPairID = getColorPairID(i, COLOR_BLACK);
+        attron(COLOR_PAIR(colorPairID));
+        mvprintw(2 + i, (termWidth - strlen(asciiArt[i])) / 2, "%s", asciiArt[i]);
+        attroff(COLOR_PAIR(colorPairID));
+    }
+    attroff(A_BOLD);
+    mvprintw(9, (termWidth - strlen(asciiArt[5])) / 2, "Developed by %s                        %s", authors, version);
+    mvprintw(12, (termWidth - 38) / 2, "Press any key to start the game...");
+    refresh();
+
+    // wait for user input
+    nodelay(stdscr, FALSE);
+    getch();
+    nodelay(stdscr, TRUE);
 }
 
 bool mainMenu() {

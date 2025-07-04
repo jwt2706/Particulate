@@ -1,10 +1,11 @@
 #include "../include/globals.h"
 #include "../include/grid.h"
+#include "../include/color.h"
 
 void renderGrid() {
     // draw border
     box(playwin, 0, 0);
-    mvwprintw(playwin, 0, 2, "| Particulate v0.0.1 | Resolution: %dpx * %dpx | FPS: %d | Pause (p) |", termHeight, termWidth, fps);
+    mvwprintw(playwin, 0, 2, "| Particulate %s | Resolution: %dpx * %dpx | FPS: %d | Pause (p) |", version, termHeight, termWidth, fps);
     mvwprintw(playwin, termHeight - 1, 2, "| Selected: (%d, %d) | Elements: (w)ater, (s)and, d(irt), (f)ire, (g)rass, (a)ir, r(ock) |", selectedX, selectedY);
 
     // render the grid of elements
@@ -17,12 +18,8 @@ void renderGrid() {
                 wattroff(playwin, A_REVERSE);
             }
 
-            // init color pair with unique color pair ID (using cantoring pairing function)
-            int fg = grid[y][x].getFGColor();
-            int bg = grid[y][x].getBGColor();
-            int colorPairID = (fg + fg)*(fg + bg + 1)/2 + bg;
-
             // apply the color pair and render the ascii char
+            int colorPairID = getColorPairID(grid[y][x].getFGColor(), grid[y][x].getBGColor());
             wattron(playwin, COLOR_PAIR(colorPairID));
             mvwaddch(playwin, y, x, grid[y][x].getAscii());
             wattroff(playwin, COLOR_PAIR(colorPairID));

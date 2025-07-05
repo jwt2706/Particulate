@@ -1,6 +1,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <vector>
 #include <filesystem>
 #include "../include/globals.h"
 #include "../include/element.h"

@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <cstring>
 
 int menu(const char* msg, const std::vector<std::string>& options);
 bool confirm(const char* question, const char* message = nullptr);

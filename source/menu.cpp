@@ -1,6 +1,7 @@
 #include <ncurses.h>
 #include <vector>
 #include <string>
+#include <cstring>
 #include "../include/menu.h"
 #include "../include/save.h"
 #include "../include/grid.h"
@@ -9,6 +10,7 @@
 #include "../include/color.h"
 
 int menu(const char* msg, const std::vector<std::string>& options) {
+    nodelay(stdscr, FALSE);
     int selected = 0;
     int numOptions = options.size();
 
@@ -37,8 +39,10 @@ int menu(const char* msg, const std::vector<std::string>& options) {
         } else if (key == KEY_DOWN) {
             selected = (selected + 1) % numOptions; // go down
         } else if (key == '\n') {
+            nodelay(stdscr, TRUE);
             return selected; // return selected option index
         } else if (key == 27) { // 'q' or ESC to exit
+            nodelay(stdscr, TRUE);
             return -1; // exit menu
         }
     }

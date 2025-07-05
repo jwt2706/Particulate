@@ -2,6 +2,7 @@
 #define SAVE_H
 
 #include <string>
+#include <vector>
 
 void saveGame(const std::string& filename);
 void loadGame(const std::string& filename);

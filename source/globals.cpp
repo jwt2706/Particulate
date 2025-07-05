@@ -1,7 +1,7 @@
 #include "../include/globals.h"
 
 const char* version = "v0.0.1";
-const char* authors = "jwt2706";
+const char* authors = "jwt2706 & oZep";
 int BORDER_SIZE = 1;
 WINDOW* playwin = nullptr;
 int fps = 15;

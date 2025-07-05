@@ -44,11 +44,10 @@ int main() {
     splashMenu();
 
     // game loop
-    bool running = true;
     struct timespec ts;
     ts.tv_sec = 0;
     ts.tv_nsec = 1000000000 / fps; // set the frame rate
-    while (running) {
+    while (true) {
         MEVENT event;
         int ch = getch(); // user input
 
@@ -107,7 +106,7 @@ int main() {
             }
             case 'p' :
             case 27: { // 'p' or ESC to pause the game
-                running = mainMenu(); // will return false if the user wants to quit the game
+                mainMenu();
                 break;
             }
             default:

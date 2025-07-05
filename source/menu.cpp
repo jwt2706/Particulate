@@ -90,8 +90,42 @@ void splashMenu() {
         attroff(COLOR_PAIR(colorPairID));
     }
     attroff(A_BOLD);
-    mvprintw(startHeight + numLines, (termWidth - strlen(asciiArt[5])) / 2, "Developed by %s                        %s", authors, version);
-    mvprintw(startHeight + numLines + 2, (termWidth - 25) / 2, "Press any key to continue...");
+    mvprintw(startHeight + numLines, (termWidth - strlen(asciiArt[5])) / 2, "Developed by %s", authors);
+    mvprintw(startHeight + numLines, ((termWidth + strlen(asciiArt[5])) / 2) - strlen(version), "%s", version);
+    
+    int selected = 0;
+    std::vector<std::string> options = {"Start Game", "Quit Game"};
+    while (true) {
+        // render the menu options side by side
+        for (int i = 0; i < options.size(); ++i) {
+            int optionX = (termWidth - 25) / 2 + i * 12;
+            if (i == selected) {
+                attron(A_REVERSE); // highlight selected option
+            }
+            mvprintw(startHeight + numLines + 2, optionX, "%s", options[i].c_str());
+            if (i == selected) {
+                attroff(A_REVERSE); // remove highlight when unselected
+            }
+        }
+        refresh();
+    
+        int key = getch();
+        if (key == KEY_RIGHT) {
+            selected = (selected + 1) % options.size(); // move right
+        } else if (key == KEY_LEFT) {
+            selected = (selected - 1 + options.size()) % options.size(); // move left
+        } else if (key == '\n') {
+            if (selected == 0) { // start game
+                nodelay(stdscr, TRUE); // resume non-blocking
+                mainMenu();
+                break;
+            } else if (selected == 1) { // quit game
+                freeGrid();
+                endwin();
+                exit(0);
+            }
+        }
+    }
     refresh();
 
     // wait for user input
@@ -100,7 +134,7 @@ void splashMenu() {
     nodelay(stdscr, TRUE);
 }
 
-bool mainMenu() {
+void mainMenu() {
     clear();
 
     std::vector<std::string> options = {
@@ -108,7 +142,7 @@ bool mainMenu() {
         "New Game",
         "Save Game",
         "Load Game",
-        "Quit Game"
+        "Return Home"
     };
     int selectedOption = menu("Game Menu. Select an option:", options);
             
@@ -116,17 +150,13 @@ bool mainMenu() {
         ; // return to game
     } else if (selectedOption == 1) { // new game
         newMenu();
-        return true;
     } else if (selectedOption == 2) { // save game
         saveMenu();
-        return true;
     } else if (selectedOption == 3) { // load game
         loadMenu();
-        return true;
     } else if (selectedOption == 4) { // quit game
-        return false;
+        splashMenu();
     }
-    return true;
 }
 
 void newMenu() {

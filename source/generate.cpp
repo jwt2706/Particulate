@@ -15,19 +15,19 @@ void generateMap() {
             int randElement = rand() % 5; // Randomly choose an element type
             switch (randElement) {
                 case 0:
-                    grid[y][x] = Element::air();
+                    grid[y][x] = Element::fromName("air");
                     break;
                 case 1:
-                    grid[y][x] = Element::water();
+                    grid[y][x] = Element::fromName("water");
                     break;
                 case 2:
-                    grid[y][x] = Element::grass();
+                    grid[y][x] = Element::fromName("grass");
                     break;
                 case 3:
-                    grid[y][x] = Element::sand();
+                    grid[y][x] = Element::fromName("sand");
                     break;
                 case 4:
-                    grid[y][x] = Element::rock();
+                    grid[y][x] = Element::fromName("rock");
                     break;
             }
         }

@@ -2,59 +2,30 @@
 #define ELEMENT_H
 
 #include <string>
-#include <ncurses.h> // nclude ncurses for color constants
+#include <vector>
+#include <ncurses.h>
 
 class Element {
 private:
-    // element ids
-    int id;           // unique int identifier for the element
+    // element properties
+    int id;           // unique identifier for the element
     std::string name; // name of the element
     char ascii;       // ascii character to represent the element
-
-    // Colors
     int fgColor;      // foreground color
     int bgColor;      // background color
-
-    // element properties
     bool movable;     // whether the element can move
     bool dynamic;     // whether the element changes over time
     bool flammable;   // whether the element can catch fire
     int density;      // density of the element (affects floating/sinking)
     int gravity;      // gravity effect (affects movement direction)
 
+    // static list of all elements
+    static std::vector<Element> elements;
+
 public:
     Element();
     Element(const int id, const std::string& name, char ascii, int fgColor, int bgColor, 
             bool movable, bool dynamic, bool flammable, int density, int gravity);
-
-    // static factory methods to generate specific elements
-    static Element air() {
-        return Element(0, "air", ' ', COLOR_BLACK, COLOR_BLACK, true, true, false, 1, 1);
-    }
-
-    static Element water() {
-        return Element(1, "water", '~', COLOR_BLUE, COLOR_BLACK, true, false, false, 3, 2);
-    }
-
-    static Element dirt() {
-        return Element(2, "dirt", '#', COLOR_YELLOW, COLOR_BLACK, true, false, false, 10, 1);
-    }
-
-    static Element sand() {
-        return Element(3, "sand", '%', COLOR_YELLOW, COLOR_BLACK, true, true, false, 8, 2);
-    }
-
-    static Element fire() {
-        return Element(4, "fire", '*', COLOR_RED, COLOR_BLACK, true, false, false, 0, -2);
-    }
-
-    static Element rock() {
-        return Element(5, "rock", '#', COLOR_WHITE, COLOR_BLACK, true, false, false, 11, 1);
-    }
-
-    static Element grass() {
-        return Element(6, "grass", '_', COLOR_GREEN, COLOR_BLACK, true, false, true, 7, 2);
-    }
 
     // accessor methods
     std::string getName() const;
@@ -68,8 +39,10 @@ public:
     int getDensity() const;
     int getGravity() const;
 
-    // get element data from id
-    static Element fromId(int id);
+    // static methods to access elements
+    static const std::vector<Element>& getAllElements();
+    static Element fromId(const int id);
+    static Element fromName(const std::string& name);
 };
 
 #endif

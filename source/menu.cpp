@@ -8,6 +8,7 @@
 #include "../include/globals.h"
 #include "../include/generate.h"
 #include "../include/color.h"
+#include "../include/element.h"
 
 int menu(const char* msg, const std::vector<std::string>& options) {
     nodelay(stdscr, FALSE);
@@ -238,4 +239,17 @@ void loadMenu() {
             loadGame(saveFiles[selectedFileIndex]);
         }
     }
+}
+
+void inventoryMenu() {
+    clear(); // Clear the screen
+
+    // render border
+    box(playwin, 0, 0);
+    mvwprintw(playwin, 0, 2, "| Inventory Menu |");
+    mvwprintw(playwin, termHeight - 1, 2, "| Selected: (%d, %d) |", selectedX, selectedY);
+
+    
+    const std::vector<Element>& elements = Element::getAllElements();
+
 }

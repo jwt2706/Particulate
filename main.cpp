@@ -33,7 +33,7 @@ int main() {
     // initialize the grid with default elements
     for (int y = BORDER_SIZE; y < termHeight - BORDER_SIZE; ++y) {
         for (int x = BORDER_SIZE; x < termWidth - BORDER_SIZE; ++x) {
-            grid[y][x] = Element::air(); // fill grid with air
+            grid[y][x] = Element::fromName("air"); // fill grid with air
         }
     }
 
@@ -77,31 +77,35 @@ int main() {
                 break;
             }
             case 'w': {
-                grid[selectedY][selectedX] = Element::water();
+                grid[selectedY][selectedX] = Element::fromName("water");
                 break;
             }
             case 's': {
-                grid[selectedY][selectedX] = Element::sand();
+                grid[selectedY][selectedX] = Element::fromName("sand");
                 break;
             }
             case 'd': {
-                grid[selectedY][selectedX] = Element::dirt();
+                grid[selectedY][selectedX] = Element::fromName("dirt");
                 break;
             }
             case 'f': {
-                grid[selectedY][selectedX] = Element::fire();
+                grid[selectedY][selectedX] = Element::fromName("fire");
                 break;
             }
             case 'g': {
-                grid[selectedY][selectedX] = Element::grass();
+                grid[selectedY][selectedX] = Element::fromName("grass");
                 break;
             }
             case 'a': {
-                grid[selectedY][selectedX] = Element::air();
+                grid[selectedY][selectedX] = Element::fromName("air");
                 break;
             }
             case 'r': {
-                grid[selectedY][selectedX] = Element::rock();
+                grid[selectedY][selectedX] = Element::fromName("rock");
+                break;
+            }
+            case 'i': {
+                inventoryMenu();
                 break;
             }
             case 'p' :

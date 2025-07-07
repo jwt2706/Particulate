@@ -5,7 +5,7 @@
 void renderGrid() {
     // draw border
     box(playwin, 0, 0);
-    mvwprintw(playwin, 0, 2, "| Particulate %s | Resolution: %dpx * %dpx | FPS: %d | Pause (p) |", version, termHeight, termWidth, fps);
+    mvwprintw(playwin, 0, 2, "| Particulate %s | Resolution: %dpx * %dpx | FPS: %d | Pause (p) | Inventory (i) |", version, termHeight, termWidth, fps);
     mvwprintw(playwin, termHeight - 1, 2, "| Selected: (%d, %d) | Elements: (w)ater, (s)and, d(irt), (f)ire, (g)rass, (a)ir, r(ock) |", selectedX, selectedY);
 
     // render the grid of elements
@@ -42,7 +42,7 @@ void clearGrid() {
     // clear the grid and reset all elements to air
     for (int y = BORDER_SIZE; y < termHeight - BORDER_SIZE; ++y) {
         for (int x = BORDER_SIZE; x < termWidth - BORDER_SIZE; ++x) {
-            grid[y][x] = Element::air();
+            grid[y][x] = Element::fromName("air");
         }
     }
     renderGrid();
@@ -72,7 +72,7 @@ void resizeGrid(int sig) {
     for (int y = BORDER_SIZE; y < newHeight - BORDER_SIZE; ++y) {
         for (int x = BORDER_SIZE; x < newWidth - BORDER_SIZE; ++x) {
             if (y >= termHeight || x >= termWidth) {
-                newGrid[y][x] = Element::air();
+                newGrid[y][x] = Element::fromName("air");
             }
         }
     }
@@ -156,14 +156,14 @@ void updateGrid() {
                             if (newY >= BORDER_SIZE && newY < termHeight - BORDER_SIZE &&
                                 newX >= BORDER_SIZE && newX < termWidth - BORDER_SIZE &&
                                 grid[newY][newX].isFlammable()) {
-                                newGrid[newY][newX] = Element::fire(); // Turn flammable element into fire
+                                newGrid[newY][newX] = Element::fromName("fire"); // Turn flammable element into fire
                                 burnOut = true;
                             }
                         }
                     }
 
                     if (burnOut) {
-                        newGrid[y][x] = Element::air(); // Burn out the fire
+                        newGrid[y][x] = Element::fromName("air"); // Burn out the fire
                     }
                 }
                 

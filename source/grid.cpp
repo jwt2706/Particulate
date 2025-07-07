@@ -6,7 +6,7 @@ void renderGrid() {
     // draw border
     box(playwin, 0, 0);
     mvwprintw(playwin, 0, 2, "| Particulate %s | Resolution: %dpx * %dpx | FPS: %d | Pause (p) | Inventory (i) |", version, termHeight, termWidth, fps);
-    mvwprintw(playwin, termHeight - 1, 2, "| Selected: (%d, %d) | Elements: (w)ater, (s)and, d(irt), (f)ire, (g)rass, (a)ir, r(ock) |", selectedX, selectedY);
+    mvwprintw(playwin, termHeight - 1, 2, "| Selected: (%d, %d) | Hotbar: (1) ... (2) ... (3) ... (4) ... (5) ... |", selectedX, selectedY);
 
     // render the grid of elements
     for (int y = BORDER_SIZE; y < termHeight - BORDER_SIZE; ++y) {
@@ -166,7 +166,6 @@ void updateGrid() {
                         newGrid[y][x] = Element::fromName("air"); // Burn out the fire
                     }
                 }
-                
             }
         }
     }

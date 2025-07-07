@@ -15,5 +15,6 @@ extern int termHeight, termWidth;
 extern int selectedX, selectedY;
 extern Element** grid;
 extern std::string saveFolder;
+extern std::vector<int> hotbar;
 
 #endif // GLOBALS_H

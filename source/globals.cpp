@@ -9,3 +9,4 @@ int termHeight = 0, termWidth = 0;
 int selectedX = 1, selectedY = 1;
 Element** grid = nullptr;
 std::string saveFolder = "saves/";
+std::vector<int> hotbar = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};

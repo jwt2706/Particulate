@@ -76,34 +76,6 @@ int main() {
                 }
                 break;
             }
-            case 'w': {
-                grid[selectedY][selectedX] = Element::fromName("water");
-                break;
-            }
-            case 's': {
-                grid[selectedY][selectedX] = Element::fromName("sand");
-                break;
-            }
-            case 'd': {
-                grid[selectedY][selectedX] = Element::fromName("dirt");
-                break;
-            }
-            case 'f': {
-                grid[selectedY][selectedX] = Element::fromName("fire");
-                break;
-            }
-            case 'g': {
-                grid[selectedY][selectedX] = Element::fromName("grass");
-                break;
-            }
-            case 'a': {
-                grid[selectedY][selectedX] = Element::fromName("air");
-                break;
-            }
-            case 'r': {
-                grid[selectedY][selectedX] = Element::fromName("rock");
-                break;
-            }
             case 'i': {
                 inventoryMenu();
                 break;
@@ -113,8 +85,16 @@ int main() {
                 mainMenu();
                 break;
             }
-            default:
+            default: {
+                // handle hotbar keys
+                if (ch >= '1' && ch <= '9') {
+                    int index = ch - '1'; // convert char to index
+                    grid[selectedY][selectedX] = Element::fromId(hotbar[index]);
+                } else if (ch == '0') {
+                    grid[selectedY][selectedX] = Element::fromId(hotbar[hotbar.size() - 1]);
+                }
                 break;
+            }
         }
 
         updateGrid();

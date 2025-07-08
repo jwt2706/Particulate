@@ -6,7 +6,17 @@ void renderGrid() {
     // draw border
     box(playwin, 0, 0);
     mvwprintw(playwin, 0, 2, "| Particulate %s | Resolution: %dpx * %dpx | FPS: %d | Pause (p) | Inventory (i) |", version, termHeight, termWidth, fps);
-    mvwprintw(playwin, termHeight - 1, 2, "| Selected: (%d, %d) | Hotbar: (1) ... (2) ... (3) ... (4) ... (5) ... |", selectedX, selectedY);
+    
+    mvwprintw(playwin, termHeight - 1, 2, "| ");
+    for (size_t i = 0; i < hotbar.size(); ++i) {
+        int elementId = hotbar[i];
+        const Element& hotbarElement = Element::getAllElements()[elementId];
+        int colorPairID = getColorPairID(hotbarElement.getFGColor(), hotbarElement.getBGColor());
+        wattron(playwin, COLOR_PAIR(colorPairID));
+        mvwprintw(playwin, termHeight - 1, 4 + i * 6, "(%d) %c ", (i + 1) % 10, hotbarElement.getAscii());
+        wattroff(playwin, COLOR_PAIR(colorPairID));
+    }
+    mvwprintw(playwin, termHeight - 1, 4 + hotbar.size() * 6, "| Selected: (%d, %d) |", selectedX, selectedY);
 
     // render the grid of elements
     for (int y = BORDER_SIZE; y < termHeight - BORDER_SIZE; ++y) {
@@ -129,8 +139,8 @@ void updateGrid() {
                     }
                 }
 
-                // make water flatten out
-                if (current.getName() == "water") {
+                // make liquids flatten out
+                if (current.getState() == "liquid") {
                     int dir = rand() % 3; // 0 = left, 1 = right, 2 = none
                 
                     switch (dir) {
@@ -146,7 +156,7 @@ void updateGrid() {
                 }
 
                 // handle fire burning
-                if (current.getName() == "fire") {
+                if (current.isIgniter()) {
                     bool burnOut = true;
 
                     for (int dy = -1; dy <= 1; ++dy) {
@@ -156,14 +166,14 @@ void updateGrid() {
                             if (newY >= BORDER_SIZE && newY < termHeight - BORDER_SIZE &&
                                 newX >= BORDER_SIZE && newX < termWidth - BORDER_SIZE &&
                                 grid[newY][newX].isFlammable()) {
-                                newGrid[newY][newX] = Element::fromName("fire"); // Turn flammable element into fire
+                                newGrid[newY][newX] = Element::fromName("fire"); // turn flammable element into fire
                                 burnOut = true;
                             }
                         }
                     }
 
-                    if (burnOut) {
-                        newGrid[y][x] = Element::fromName("air"); // Burn out the fire
+                    if (burnOut && current.getName() == "fire") {
+                        newGrid[y][x] = Element::fromName("air"); // burn out the fire
                     }
                 }
             }

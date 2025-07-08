@@ -13,9 +13,11 @@ private:
     char ascii;       // ascii character to represent the element
     int fgColor;      // foreground color
     int bgColor;      // background color
+    std::string state; // state of the element (gas, liquid, solid)
     bool movable;     // whether the element can move
     bool dynamic;     // whether the element changes over time
     bool flammable;   // whether the element can catch fire
+    bool igniter;     // whether the element can start a fire on contact
     int density;      // density of the element (affects floating/sinking)
     int gravity;      // gravity effect (affects movement direction)
 
@@ -24,8 +26,8 @@ private:
 
 public:
     Element();
-    Element(const int id, const std::string& name, char ascii, int fgColor, int bgColor, 
-            bool movable, bool dynamic, bool flammable, int density, int gravity);
+    Element(const int id, const std::string& name, char ascii, int fgColor, int bgColor, const std::string& state,
+            bool movable, bool dynamic, bool flammable, bool igniter, int density, int gravity);
 
     // accessor methods
     std::string getName() const;
@@ -33,9 +35,11 @@ public:
     char getAscii() const;
     int getFGColor() const;
     int getBGColor() const;
+    std::string getState() const;
     bool isMovable() const;
     bool isDynamic() const;
     bool isFlammable() const;
+    bool isIgniter() const;
     int getDensity() const;
     int getGravity() const;
 

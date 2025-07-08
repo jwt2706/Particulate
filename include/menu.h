@@ -12,6 +12,5 @@ void mainMenu();
 void newMenu();
 void saveMenu();
 void loadMenu();
-void inventoryMenu();
 
 #endif // MENU_H

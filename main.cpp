@@ -11,6 +11,7 @@
 #include "include/save.h"
 #include "include/menu.h"
 #include "include/color.h"
+#include "include/inventory.h"
 
 int main() {
     initscr();
@@ -77,7 +78,7 @@ int main() {
                 break;
             }
             case 'i': {
-                inventoryMenu();
+                inventory();
                 break;
             }
             case 'p' :

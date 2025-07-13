@@ -23,7 +23,15 @@ int main() {
     nodelay(stdscr, TRUE); // makes getch() non-blocking
     start_color();
 
-	// get screen demensions
+    if (!checkColorSupport()) {
+        nodelay(stdscr, FALSE);
+        mvprintw(0, 0, "Your terminal does not support 256 color. It's required for Particulate to run properly. Press any key to exit.");
+        getch();
+        endwin();
+        return 0;
+    }
+
+    // get screen demensions
 	getmaxyx(stdscr, termHeight, termWidth);
 
     grid = new Element*[termHeight];

@@ -1,5 +1,9 @@
 #include <ncurses.h>
 
+bool checkColorSupport() {
+    return COLORS >= 256;
+}
+
 // inits all color pairs for easy use, and assigns each with a unique ID
 // using the cantor paring function
 void initColorPairs() {

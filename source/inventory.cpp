@@ -1,4 +1,5 @@
 #include <ncurses.h>
+#include <algorithm>
 #include <vector>
 #include "../include/element.h"
 #include "../include/color.h"
@@ -23,7 +24,7 @@ void inventory() {
             const Element& hotbarElement = elements[elementId];
             int colorPairID = getColorPairID(hotbarElement.getFGColor(), hotbarElement.getBGColor());
             attron(A_BOLD);
-            mvprintw(2, 2 + i * 6, "(%d)", (i + 1) % 10);
+            mvprintw(2, 2 + i * 6, "(%zu)", (i + 1) % 10);
             attroff(A_BOLD);
             wattron(stdscr, COLOR_PAIR(colorPairID));
             mvprintw(2, 6 + i * 6, "%c", hotbarElement.getAscii());

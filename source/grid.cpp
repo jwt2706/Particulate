@@ -13,7 +13,7 @@ void renderGrid() {
         const Element& hotbarElement = Element::getAllElements()[elementId];
         int colorPairID = getColorPairID(hotbarElement.getFGColor(), hotbarElement.getBGColor());
         wattron(playwin, COLOR_PAIR(colorPairID));
-        mvwprintw(playwin, termHeight - 1, 4 + i * 6, "(%d) %c ", (i + 1) % 10, hotbarElement.getAscii());
+        mvwprintw(playwin, termHeight - 1, 4 + i * 6, "(%zu) %c ", (i + 1) % 10, hotbarElement.getAscii());
         wattroff(playwin, COLOR_PAIR(colorPairID));
     }
     mvwprintw(playwin, termHeight - 1, 4 + hotbar.size() * 6, "| Selected: (%d, %d) |", selectedX, selectedY);

@@ -31,26 +31,11 @@ int main() {
         return 0;
     }
 
-    // get screen demensions
-	getmaxyx(stdscr, termHeight, termWidth);
-
-    grid = new Element*[termHeight];
-    for (int i = 0; i < termHeight; ++i) {
-        grid[i] = new Element[termWidth];
-    }
-
-    // initialize the grid with default elements
-    for (int y = BORDER_SIZE; y < termHeight - BORDER_SIZE; ++y) {
-        for (int x = BORDER_SIZE; x < termWidth - BORDER_SIZE; ++x) {
-            grid[y][x] = Element::fromName("air"); // fill grid with air
-        }
-    }
-
-    initColorPairs(); // initialize color pairs
+    initGrid();
+    initColorPairs();
     playwin = newwin(termHeight, termWidth, 0, 0); // create window for user
-    renderGrid();
     signal(SIGWINCH, resizeGrid); // handle window resize dynamically
-    splashMenu();
+    splashMenu(); // start the game on the splash screen
 
     // game loop
     struct timespec ts;

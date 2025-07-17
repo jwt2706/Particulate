@@ -1,7 +1,7 @@
 #ifndef COLOR_H
 #define COLOR_H
 
-bool checkColorSupport();
+bool isColorSupported();
 void initColorPairs();
 int getColorPairID(int fg, int bg);
 

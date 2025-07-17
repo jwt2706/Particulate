@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 #include <time.h>
+#include <cstdlib>
 #include <signal.h>
 #include <ncurses.h>
 #include "include/globals.h"
@@ -13,7 +14,7 @@
 #include "include/color.h"
 #include "include/inventory.h"
 
-int main() {
+void setup() {
     initscr();
     noecho();
     curs_set(0);
@@ -23,18 +24,22 @@ int main() {
     nodelay(stdscr, TRUE); // makes getch() non-blocking
     start_color();
 
-    if (!checkColorSupport()) {
+    if (!isColorSupported()) {
         nodelay(stdscr, FALSE);
         mvprintw(0, 0, "Your terminal does not support 256 color. It's required for Particulate to run properly. Press any key to exit.");
         getch();
         endwin();
-        return 0;
+        exit(EXIT_FAILURE);
     }
 
     initGrid();
     initColorPairs();
     playwin = newwin(termHeight, termWidth, 0, 0); // create window for user
     signal(SIGWINCH, resizeGrid); // handle window resize dynamically
+}
+
+int main() {
+    setup(); // setup ncurses and game
     splashMenu(); // start the game on the splash screen
 
     // game loop

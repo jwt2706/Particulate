@@ -1,6 +1,6 @@
 #include <ncurses.h>
 
-bool checkColorSupport() {
+bool isColorSupported() {
     return COLORS >= 256;
 }
 

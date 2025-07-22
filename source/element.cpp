@@ -2,26 +2,26 @@
 
 // element definitions
 std::vector<Element> Element::elements = {
-    //      id,     name,       ascii,  fgColor,        bgColor,        state,      movable,    dynamic,    flammable,  igniter,    density,    gravity 
-    Element(0,      "air",      ' ',    COLOR_BLACK,    COLOR_BLACK,    "gas",      true,       true,       false,      false,      1,          1),
-    Element(1,      "water",    '~',    COLOR_BLUE,     COLOR_BLACK,    "liquid",   true,       false,      false,      false,      3,          2),
-    Element(2,      "dirt",     '#',    COLOR_YELLOW,   COLOR_BLACK,    "solid",    true,       false,      false,      false,      10,         1),
-    Element(3,      "sand",     '%',    COLOR_YELLOW,   COLOR_BLACK,    "solid",    true,       true,       false,      false,      8,          2),
-    Element(4,      "fire",     '*',    COLOR_RED,      COLOR_BLACK,    "gas",      true,       false,      false,      true,       0,          -2),
-    Element(5,      "rock",     '#',    COLOR_WHITE,    COLOR_BLACK,    "solid",    true,       false,      false,      false,      11,         1),
-    Element(6,      "grass",    '_',    COLOR_GREEN,    COLOR_BLACK,    "solid",    true,       false,      true,       false,      7,          2),
-    Element(7,      "lava",     '@',    COLOR_RED,      COLOR_BLACK,    "liquid",   true,       true,       false,      true,       12,         3),
-    Element(8,      "ice",      '=',    COLOR_CYAN,     COLOR_BLACK,    "solid",    true,       false,      false,      false,      5,          0),
-    Element(9,      "wood",     '|',    COLOR_YELLOW,   COLOR_BLACK,    "solid",    false,      false,      true,       false,      6,          1),
-    Element(10,     "leaf",     '#',    COLOR_GREEN,    COLOR_BLACK,    "solid",    false,      false,      true,       false,      2,          0),
-    Element(11,     "steam",    '^',    COLOR_WHITE,    COLOR_BLACK,    "gas",      true,       true,       false,      false,      1,          -1),
-    Element(12,     "oil",      '~',    COLOR_MAGENTA,  COLOR_BLACK,    "liquid",   true,       true,       true,       false,      4,          2),
-    Element(13,     "metal",    '$',    COLOR_WHITE,    COLOR_BLACK,    "solid",    false,      false,      false,      false,      15,         1),
-    Element(14,     "mud",      '&',    COLOR_YELLOW,   COLOR_BLACK,    "solid",    true,       false,      false,      false,      9,          1),
-    Element(15,     "acid",     '!',    COLOR_GREEN,    COLOR_BLACK,    "liquid",   true,       true,       false,      true,       3,          2),
-    Element(16,     "cloud",    '~',    COLOR_WHITE,    COLOR_BLACK,    "gas",      true,       true,       false,      false,      -1,         -1),
-    Element(17,     "glass",    '=',    COLOR_WHITE,    COLOR_BLACK,    "solid",    false,      false,      false,      false,      10,         2),
-    Element(18,     "coal",     '#',    COLOR_BLACK,    COLOR_BLACK,    "solid",    false,      false,      true,       false,      8,          2),
+    //      id,     name,       ascii,  fgColor,    bgColor,    state,      movable,    dynamic,    flammable,  igniter,    density,    gravity 
+    Element(0,      "air",      ' ',    15,         0,          "gas",      true,       true,       false,      false,      1,          1),
+    Element(1,      "water",    '~',    39,         0,          "liquid",   true,       false,      false,      false,      3,          2),
+    Element(2,      "dirt",     '#',    94,         0,          "solid",    true,       false,      false,      false,      10,         1),
+    Element(3,      "sand",     '%',    228,        0,          "solid",    true,       true,       false,      false,      8,          2),
+    Element(4,      "fire",     '*',    196,        0,          "gas",      true,       false,      false,      true,       0,          -2),
+    Element(5,      "rock",     '#',    8,          0,          "solid",    true,       false,      false,      false,      11,         1),
+    Element(6,      "grass",    '_',    34,         0,          "solid",    true,       false,      true,       false,      7,          2),
+    Element(7,      "lava",     '@',    208,        0,          "liquid",   true,       true,       false,      true,       12,         3),
+    Element(8,      "ice",      '=',    51,         0,          "solid",    true,       false,      false,      false,      5,          0),
+    Element(9,      "wood",     '|',    130,        0,          "solid",    false,      false,      true,       false,      6,          1),
+    Element(10,     "leaf",     '#',    46,         0,          "solid",    false,      false,      true,       false,      2,          0),
+    Element(11,     "steam",    '^',    250,        0,          "gas",      true,       true,       false,      false,      1,          -1),
+    Element(12,     "oil",      '~',    53,         0,          "liquid",   true,       true,       true,       false,      4,          2),
+    Element(13,     "metal",    '$',    7,          0,          "solid",    false,      false,      false,      false,      15,         1),
+    Element(14,     "mud",      '&',    94,         0,          "solid",    true,       false,      false,      false,      9,          1),
+    Element(15,     "acid",     '!',    118,        0,          "liquid",   true,       true,       false,      true,       3,          2),
+    Element(16,     "cloud",    '~',    252,        0,          "gas",      true,       true,       false,      false,      -1,         -1),
+    Element(17,     "glass",    '=',    159,        0,          "solid",    false,      false,      false,      false,      10,         2),
+    Element(18,     "coal",     '#',    16,         0,          "solid",    false,      false,      true,       false,      8,          2),
 };
 
 // constructors

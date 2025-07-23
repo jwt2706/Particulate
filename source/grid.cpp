@@ -28,10 +28,10 @@ void renderGrid() {
     for (size_t i = 0; i < hotbar.size(); ++i) {
         int elementId = hotbar[i];
         const Element& hotbarElement = Element::getAllElements()[elementId];
-        int colorPairID = getColorPairID(hotbarElement.getFGColor(), hotbarElement.getBGColor());
-        wattron(playwin, COLOR_PAIR(colorPairID));
+        int color = hotbarElement.getColor();
+        wattron(playwin, COLOR_PAIR(color));
         mvwprintw(playwin, termHeight - 1, 4 + i * 6, "(%zu) %c ", (i + 1) % 10, hotbarElement.getAscii());
-        wattroff(playwin, COLOR_PAIR(colorPairID));
+        wattroff(playwin, COLOR_PAIR(color));
     }
     mvwprintw(playwin, termHeight - 1, 4 + hotbar.size() * 6, "| Selected: (%d, %d) |", selectedX, selectedY);
 
@@ -46,10 +46,10 @@ void renderGrid() {
             }
 
             // apply the color pair and render the ascii char
-            int colorPairID = getColorPairID(grid[y][x].getFGColor(), grid[y][x].getBGColor());
-            wattron(playwin, COLOR_PAIR(colorPairID));
+            int color = grid[y][x].getColor();
+            wattron(playwin, COLOR_PAIR(color));
             mvwaddch(playwin, y, x, grid[y][x].getAscii());
-            wattroff(playwin, COLOR_PAIR(colorPairID));
+            wattroff(playwin, COLOR_PAIR(color));
         }
     }
 

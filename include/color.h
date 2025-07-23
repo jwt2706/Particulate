@@ -3,6 +3,5 @@
 
 bool isColorSupported();
 void initColorPairs();
-int getColorPairID(int fg, int bg);
 
 #endif // COLOR_H

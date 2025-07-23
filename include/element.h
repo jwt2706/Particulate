@@ -8,33 +8,31 @@
 class Element {
 private:
     // element properties
-    int id;           // unique identifier for the element
-    std::string name; // name of the element
-    char ascii;       // ascii character to represent the element
-    int fgColor;      // foreground color
-    int bgColor;      // background color
-    std::string state; // state of the element (gas, liquid, solid)
-    bool movable;     // whether the element can move
-    bool dynamic;     // whether the element changes over time
-    bool flammable;   // whether the element can catch fire
-    bool igniter;     // whether the element can start a fire on contact
-    int density;      // density of the element (affects floating/sinking)
-    int gravity;      // gravity effect (affects movement direction)
+    int id;             // unique identifier for the element
+    std::string name;   // name of the element
+    char ascii;         // ascii character to represent the element
+    int color;          // color
+    std::string state;  // state of the element (gas, liquid, solid)
+    bool movable;       // whether the element can move
+    bool dynamic;       // whether the element changes over time
+    bool flammable;     // whether the element can catch fire
+    bool igniter;       // whether the element can start a fire on contact
+    int density;        // density of the element (affects floating/sinking)
+    int gravity;        // gravity effect (affects movement direction)
 
     // static list of all elements
     static std::vector<Element> elements;
 
 public:
     Element();
-    Element(const int id, const std::string& name, char ascii, int fgColor, int bgColor, const std::string& state,
+    Element(const int id, const std::string& name, char ascii, int color, const std::string& state,
             bool movable, bool dynamic, bool flammable, bool igniter, int density, int gravity);
 
     // accessor methods
     std::string getName() const;
     int getId() const;
     char getAscii() const;
-    int getFGColor() const;
-    int getBGColor() const;
+    int getColor() const;
     std::string getState() const;
     bool isMovable() const;
     bool isDynamic() const;

@@ -85,10 +85,9 @@ void splashMenu() {
     attron(A_BOLD);
     for (int i = 0; i < numLines; ++i) {
         // apply the color pair and render the ascii char
-        int colorPairID = getColorPairID(i, COLOR_BLACK);
-        attron(COLOR_PAIR(colorPairID));
+        attron(COLOR_PAIR(i));
         mvprintw(startHeight + i, (termWidth - strlen(asciiArt[i])) / 2, "%s", asciiArt[i]);
-        attroff(COLOR_PAIR(colorPairID));
+        attroff(COLOR_PAIR(i));
     }
     attroff(A_BOLD);
     mvprintw(startHeight + numLines, (termWidth - strlen(asciiArt[5])) / 2, "Developed by %s", authors);

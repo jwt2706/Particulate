@@ -22,13 +22,13 @@ void inventory() {
         for (size_t i = 0; i < hotbar.size(); ++i) {
             int elementId = hotbar[i];
             const Element& hotbarElement = elements[elementId];
-            int colorPairID = getColorPairID(hotbarElement.getFGColor(), hotbarElement.getBGColor());
+            int color = hotbarElement.getColor();
             attron(A_BOLD);
             mvprintw(2, 2 + i * 6, "(%zu)", (i + 1) % 10);
             attroff(A_BOLD);
-            wattron(stdscr, COLOR_PAIR(colorPairID));
+            wattron(stdscr, COLOR_PAIR(color));
             mvprintw(2, 6 + i * 6, "%c", hotbarElement.getAscii());
-            wattroff(stdscr, COLOR_PAIR(colorPairID));
+            wattroff(stdscr, COLOR_PAIR(color));
         }
 
         attron(A_BOLD);
@@ -51,10 +51,10 @@ void inventory() {
             }
         
             mvprintw(y, 2, "%i. %s", elements[i].getId(), elements[i].getName().c_str());
-            int colorPairID = getColorPairID(elements[i].getFGColor(), elements[i].getBGColor());
-            wattron(stdscr, COLOR_PAIR(colorPairID));
+            int color = elements[i].getColor();
+            wattron(stdscr, COLOR_PAIR(color));
             mvprintw(y, 12, "%c", elements[i].getAscii());
-            wattroff(stdscr, COLOR_PAIR(colorPairID));
+            wattroff(stdscr, COLOR_PAIR(color));
         
             if (isInHotbar) {
                 attroff(A_BOLD); // Remove bold attribute after rendering
@@ -110,8 +110,8 @@ void inventory() {
         mvaddch(startY + boxHeight - 1, startX, ACS_LLCORNER); // Bottom-left corner
         mvaddch(startY + boxHeight - 1, startX + boxWidth - 1, ACS_LRCORNER); // Bottom-right corner
         
-        int colorPairID = getColorPairID(selectedElement.getFGColor(), selectedElement.getBGColor());
-        wattron(stdscr, COLOR_PAIR(colorPairID));
+        int color = selectedElement.getColor();
+        wattron(stdscr, COLOR_PAIR(color));
 
         // Display the selected element in the center of the box
         char asciiChar = selectedElement.getAscii();
@@ -120,7 +120,7 @@ void inventory() {
         mvprintw(centerY, centerX, "%c", asciiChar); // Place the ASCII character in the center
 
         
-        wattroff(stdscr, COLOR_PAIR(colorPairID));
+        wattroff(stdscr, COLOR_PAIR(color));
 
         int key = getch();
         if (key == KEY_UP) {

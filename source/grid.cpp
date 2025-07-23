@@ -147,17 +147,14 @@ void updateGrid() {
 
             if (current.isMovable()) {
                 // handle gravity
-                if (current.getGravity() > 0) {
-                    if (tryMove(y, x, y + 1, x)) continue; // strait down
-                    
-                    if (current.getGravity() > 1) {
-                        if (tryMove(y, x, y + 1, x - 1)) continue; // down left
-                        if (tryMove(y, x, y + 1, x + 1)) continue; // down right
-                    }
+                if (tryMove(y, x, y + 1, x)) continue; // strait down
+                if (current.isPiles()) {
+                    if (tryMove(y, x, y + 1, x - 1)) continue; // down left
+                    if (tryMove(y, x, y + 1, x + 1)) continue; // down right
                 }
-
+                
                 // make liquids flatten out
-                if (current.getState() == "liquid") {
+                if (current.isDiffusable()) {
                     int dir = rand() % 3; // 0 = left, 1 = right, 2 = none
                 
                     switch (dir) {

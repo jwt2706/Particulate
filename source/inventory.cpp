@@ -78,15 +78,16 @@ void inventory() {
         mvprintw(7, propertyNameCol, "%s", selectedElement.getName().c_str());
         mvprintw(9, propertyNameCol, "Movable:");
         mvprintw(9, propertyDataCol, "%s", selectedElement.isMovable() ? "Yes" : "No");
-        mvprintw(10, propertyNameCol, "Dynamic:");
-        mvprintw(10, propertyDataCol, "%s", selectedElement.isDynamic() ? "Yes" : "No");
-        mvprintw(11, propertyNameCol, "Flammable:");
-        mvprintw(11, propertyDataCol, "%s", selectedElement.isFlammable() ? "Yes" : "No");
-        mvprintw(12, propertyNameCol, "Density:");
-        mvprintw(12, propertyDataCol, "%d", selectedElement.getDensity());
-        mvprintw(13, propertyNameCol, "Gravity:");
-        mvprintw(13, propertyDataCol, "%d", selectedElement.getGravity());
-
+        mvprintw(10, propertyNameCol, "Flammable:");
+        mvprintw(10, propertyDataCol, "%s", selectedElement.isFlammable() ? "Yes" : "No");
+        mvprintw(11, propertyNameCol, "Igniter:");
+        mvprintw(11, propertyDataCol, "%s", selectedElement.isIgniter() ? "Yes" : "No");
+        mvprintw(12, propertyNameCol, "Piles:");
+        mvprintw(12, propertyDataCol, "%s", selectedElement.isPiles() ? "Yes" : "No");
+        mvprintw(13, propertyNameCol, "Diffusable:");
+        mvprintw(13, propertyDataCol, "%s", selectedElement.isDiffusable() ? "Yes" : "No");
+        mvprintw(14, propertyNameCol, "Density:");
+        mvprintw(14, propertyDataCol, "%d", selectedElement.getDensity());
         
         // Define dimensions for the box
         int boxHeight = 7; // Height of the box (including padding)

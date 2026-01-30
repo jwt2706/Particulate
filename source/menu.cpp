@@ -85,10 +85,9 @@ void splashMenu() {
     attron(A_BOLD);
     for (int i = 0; i < numLines; ++i) {
         // apply the color pair and render the ascii char
-        int colorPairID = getColorPairID(i, COLOR_BLACK);
-        attron(COLOR_PAIR(colorPairID));
+        attron(COLOR_PAIR(i));
         mvprintw(startHeight + i, (termWidth - strlen(asciiArt[i])) / 2, "%s", asciiArt[i]);
-        attroff(COLOR_PAIR(colorPairID));
+        attroff(COLOR_PAIR(i));
     }
     attroff(A_BOLD);
     mvprintw(startHeight + numLines, (termWidth - strlen(asciiArt[5])) / 2, "Developed by %s", authors);
@@ -125,14 +124,12 @@ void splashMenu() {
                 endwin();
                 exit(0);
             }
+        } else if (key == 27) { // ESC to exit
+            freeGrid();
+            endwin();
+            exit(0);
         }
     }
-    refresh();
-
-    // wait for user input
-    nodelay(stdscr, FALSE);
-    getch();
-    nodelay(stdscr, TRUE);
 }
 
 void mainMenu() {
@@ -148,14 +145,14 @@ void mainMenu() {
     int selectedOption = menu("Game Menu. Select an option:", options);
             
     if (selectedOption == 0) { // resume game
-        ; // return to game
+        return; // return to game loop
     } else if (selectedOption == 1) { // new game
         newMenu();
     } else if (selectedOption == 2) { // save game
         saveMenu();
     } else if (selectedOption == 3) { // load game
         loadMenu();
-    } else if (selectedOption == 4) { // quit game
+    } else if (selectedOption == 4 || selectedOption == -1) { // quit game
         splashMenu();
     }
 }
@@ -196,7 +193,7 @@ void saveMenu() {
         // User chose to create a new save
         clear();
         nodelay(stdscr, FALSE); // block until user confirms (or doesn't)
-        mvprintw(0, 0, "Enter save slot name (if it already exitst, it will overwrite): ");
+        mvprintw(0, 0, "Enter save slot name (if it already exist, it will overwrite): ");
         refresh();
 
         char saveSlot[256];
@@ -239,17 +236,4 @@ void loadMenu() {
             loadGame(saveFiles[selectedFileIndex]);
         }
     }
-}
-
-void inventoryMenu() {
-    clear(); // Clear the screen
-
-    // render border
-    box(playwin, 0, 0);
-    mvwprintw(playwin, 0, 2, "| Inventory Menu |");
-    mvwprintw(playwin, termHeight - 1, 2, "| Selected: (%d, %d) |", selectedX, selectedY);
-
-    
-    const std::vector<Element>& elements = Element::getAllElements();
-
 }

@@ -4,6 +4,7 @@
 #include <ncurses.h>
 #include "element.h"
 
+void initGrid();
 void renderGrid();
 void freeGrid();
 void clearGrid();

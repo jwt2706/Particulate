@@ -2,43 +2,65 @@
 
 // element definitions
 std::vector<Element> Element::elements = {
-    Element(0, "air", ' ', COLOR_BLACK, COLOR_BLACK, true, true, false, 1, 1),
-    Element(1, "water", '~', COLOR_BLUE, COLOR_BLACK, true, false, false, 3, 2),
-    Element(2, "dirt", '#', COLOR_YELLOW, COLOR_BLACK, true, false, false, 10, 1),
-    Element(3, "sand", '%', COLOR_YELLOW, COLOR_BLACK, true, true, false, 8, 2),
-    Element(4, "fire", '*', COLOR_RED, COLOR_BLACK, true, false, false, 0, -2),
-    Element(5, "rock", '#', COLOR_WHITE, COLOR_BLACK, true, false, false, 11, 1),
-    Element(6, "grass", '_', COLOR_GREEN, COLOR_BLACK, true, false, true, 7, 2),
-    Element(7, "lava", '@', COLOR_RED, COLOR_BLACK, true, true, false, 12, 3),
-    Element(8, "ice", '=', COLOR_CYAN, COLOR_BLACK, true, false, false, 5, 0),
-    Element(9, "wood", '|', COLOR_YELLOW, COLOR_BLACK, false, false, true, 6, 0),
-    Element(10, "leaf", '#', COLOR_GREEN, COLOR_BLACK, false, false, true, 2, 0),
-    Element(11, "steam", '^', COLOR_WHITE, COLOR_BLACK, true, true, false, 1, -1),
-    Element(12, "oil", '~', COLOR_MAGENTA, COLOR_BLACK, true, true, true, 4, 2),
-    Element(13, "metal", '$', COLOR_WHITE, COLOR_BLACK, false, false, false, 15, 0)
+    //      id,     name,       ascii,  color,      density,    movable,    flammable,  igniter,    piles,  diffusable
+    Element(0,      "air",      ' ',    15,         1,          true,       false,      false,      false,  false),
+    Element(1,      "water",    '~',    39,         3,          true,       false,      false,      false,  true),
+    Element(2,      "dirt",     '#',    94,         10,         true,       false,      false,      false,  false),
+    Element(3,      "sand",     '%',    228,        8,          true,       false,      false,      true,   false),
+    Element(4,      "fire",     '*',    196,        0,          true,       false,      true,       false,  false),
+    Element(5,      "rock",     '#',    8,          11,         true,       false,      false,      false,  false),
+    Element(6,      "grass",    '_',    34,         7,          true,       true,       false,      true,   false),
+    Element(7,      "lava",     '@',    208,        12,         true,       false,      true,       false,  true),
+    Element(8,      "ice",      '=',    51,         5,          true,       false,      false,      true,   false),
+    Element(9,      "wood",     '|',    130,        6,          false,      true,       false,      false,  false),
+    Element(10,     "leaf",     '#',    46,         2,          false,      true,       false,      false,  false),
+    Element(11,     "steam",    '^',    250,        1,          true,       false,      false,      false,  true),
+    Element(12,     "oil",      '~',    53,         4,          true,       true,       false,      false,  true),
+    Element(13,     "metal",    '$',    7,          15,         false,      false,      false,      false,  false),
+    Element(14,     "mud",      '&',    94,         9,          true,       false,      false,      true,   false),
+    Element(15,     "acid",     '!',    118,        3,          true,       false,      true,       false,  true),
+    Element(16,     "cloud",    '~',    252,        -1,         true,       false,      false,      false,  true),
+    Element(17,     "glass",    '=',    159,        10,         false,      false,      false,      false,  false),
+    Element(18,     "coal",     '#',    16,         8,          false,      true,       false,      true,   false),
 };
 
 // constructors
 Element::Element() 
-    : id(0), name("air"), ascii(' '), fgColor(COLOR_BLACK), bgColor(COLOR_BLACK), 
-      movable(true), dynamic(true), flammable(false), density(1), gravity(1) {}
-Element::Element(const int id, const std::string& name, char ascii, int fgColor, int bgColor, 
-                 bool movable, bool dynamic, bool flammable, int density, int gravity)
-    : id(id), name(name), ascii(ascii), fgColor(fgColor), bgColor(bgColor), 
-      movable(movable), dynamic(dynamic), flammable(flammable), 
-      density(density), gravity(gravity) {}
+    :   id(0),
+        name("air"),
+        ascii(' '),
+        color(15),
+        density(1), 
+        movable(true),
+        flammable(false),
+        igniter(false),
+        piles(false),
+        diffusable(false){}
+        
+Element::Element(const int id, const std::string& name, char ascii, int color, int density,
+                bool movable, bool flammable, bool igniter, bool piles, bool diffusable)
+    :   id(id),
+        name(name),
+        ascii(ascii),
+        color(color),
+        density(density),
+        movable(movable),
+        flammable(flammable),
+        igniter(igniter),
+        piles(piles),
+        diffusable(diffusable) {}
 
 // accessor methods
 std::string Element::getName() const { return name; }
 int Element::getId() const { return id; }
 char Element::getAscii() const { return ascii; }
-int Element::getFGColor() const { return fgColor; }
-int Element::getBGColor() const { return bgColor; }
-bool Element::isMovable() const { return movable; }
-bool Element::isDynamic() const { return dynamic; }
-bool Element::isFlammable() const { return flammable; }
+int Element::getColor() const { return color; }
 int Element::getDensity() const { return density; }
-int Element::getGravity() const { return gravity; }
+bool Element::isMovable() const { return movable; }
+bool Element::isFlammable() const { return flammable; }
+bool Element::isIgniter() const { return igniter; }
+bool Element::isPiles() const { return piles; }
+bool Element::isDiffusable() const { return diffusable; }
 
 // static method to get all elements
 const std::vector<Element>& Element::getAllElements() {

@@ -16,5 +16,6 @@ extern int selectedX, selectedY;
 extern Element** grid;
 extern std::string saveFolder;
 extern std::vector<int> hotbar;
+extern int selectedHotbarIndex;
 
 #endif // GLOBALS_H

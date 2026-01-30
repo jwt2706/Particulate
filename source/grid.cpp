@@ -24,11 +24,22 @@ void renderGrid() {
     box(playwin, 0, 0);
     mvwprintw(playwin, 0, 2, "| Particulate %s | Resolution: %dpx * %dpx | FPS: %d | Pause (p) | Inventory (i) |", version, termHeight, termWidth, fps);
     
+    // print hotbar contents
     mvwprintw(playwin, termHeight - 1, 2, "| ");
     for (size_t i = 0; i < hotbar.size(); ++i) {
+        // get hotbar element info
         int elementId = hotbar[i];
         const Element& hotbarElement = Element::getAllElements()[elementId];
         int color = hotbarElement.getColor();
+
+        // if the hotbar element is currently selected, highlight it
+        if (i == selectedHotbarIndex) {
+            wattron(playwin, A_REVERSE); // highlight selected hotbar element
+        } else {
+            wattroff(playwin, A_REVERSE);
+        }
+
+        // render hotbar element
         wattron(playwin, COLOR_PAIR(color));
         mvwprintw(playwin, termHeight - 1, 4 + i * 6, "(%zu) %c ", (i + 1) % 10, hotbarElement.getAscii());
         wattroff(playwin, COLOR_PAIR(color));

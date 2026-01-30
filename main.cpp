@@ -21,6 +21,7 @@ void setup() {
     cbreak(); // allow instant key input
     set_escdelay(0); // disable escape delay
     keypad(stdscr, TRUE); // enable special keys (like arrow keys)
+    mousemask(ALL_MOUSE_EVENTS | REPORT_MOUSE_POSITION, NULL); // enable mouse events
     nodelay(stdscr, TRUE); // makes getch() non-blocking
     start_color();
 
@@ -46,10 +47,9 @@ int main() {
     struct timespec ts;
     ts.tv_sec = 0;
     ts.tv_nsec = 1000000000 / fps; // set the frame rate
+    MEVENT event;
     while (true) {
-        MEVENT event;
         int ch = getch(); // user input
-
         switch (ch) {
             case KEY_UP: {
                 if (selectedY > BORDER_SIZE) {
@@ -84,18 +84,29 @@ int main() {
                 mainMenu();
                 break;
             }
+            case 10: { // ENTER key to place element
+                grid[selectedY][selectedX] = Element::fromId(hotbar[selectedHotbarIndex]);
+                break;
+            }
             default: {
                 // handle hotbar keys
-                if (ch >= '1' && ch <= '9') {
-                    int index = ch - '1'; // convert char to index
-                    grid[selectedY][selectedX] = Element::fromId(hotbar[index]);
-                } else if (ch == '0') {
-                    grid[selectedY][selectedX] = Element::fromId(hotbar[hotbar.size() - 1]);
+                if (ch >= '0' && ch <= '9') {
+                    // convert number key input to int
+                    int index = (ch == '0') ? (hotbar.size() - 1) : (ch - '1');
+                    selectedHotbarIndex = index;
                 }
                 break;
             }
+        }    
+    
+        if (ch == KEY_MOUSE) {
+            if (getmouse(&event) == OK) {
+                selectedX = event.x;
+                selectedY = event.y;
+                grid[selectedY][selectedX] = Element::fromId(hotbar[selectedHotbarIndex]);
+            }
         }
-
+        
         updateGrid();
         renderGrid();
         nanosleep(&ts, NULL); // sleep for the specified time to control the frame rate

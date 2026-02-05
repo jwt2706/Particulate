@@ -1,4 +1,4 @@
-main
 .vscode
-saves
-bin
+saves/
+bin/
+build/

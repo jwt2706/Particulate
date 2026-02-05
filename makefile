@@ -1,12 +1,12 @@
 all: clean build run
 
 build:
-	g++ main.cpp $(wildcard src/*.cpp) -o particulate -lncurses -std=c++17
+	g++ main.cpp $(wildcard src/*.cpp) -o build/particulate -lncurses -std=c++17
 
 run:
-	./particulate
+	./build/particulate
 clean:
-	rm -f particulate
+	rm -f ./build/particulate
 
 # phony targets
 .PHONY: all clean run

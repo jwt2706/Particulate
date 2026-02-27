@@ -9,6 +9,8 @@
 A Powder Game, in the Terminal
 </pre>
 
+Particulate is a particle sandbox game that lets you spawn various elements into a miniature ASCII world right in your terminal. Watch them interact dynamically, even as you resize the window!
+
 ## Play
 Release coming soon<sup>TM</sup>
 

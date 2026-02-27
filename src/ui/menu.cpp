@@ -2,13 +2,13 @@
 #include <vector>
 #include <string>
 #include <cstring>
-#include "../include/menu.h"
-#include "../include/save.h"
-#include "../include/grid.h"
-#include "../include/globals.h"
-#include "../include/generate.h"
-#include "../include/color.h"
-#include "../include/element.h"
+#include "menu.h"
+#include "save.h"
+#include "grid.h"
+#include "globals.h"
+#include "generate.h"
+#include "color.h"
+#include "element.h"
 
 int menu(const char* msg, const std::vector<std::string>& options) {
     nodelay(stdscr, FALSE);

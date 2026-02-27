@@ -6,13 +6,13 @@
 #include <cstdlib>
 #include <signal.h>
 #include <ncurses.h>
-#include "include/globals.h"
-#include "include/element.h"
-#include "include/grid.h"
-#include "include/save.h"
-#include "include/menu.h"
-#include "include/color.h"
-#include "include/inventory.h"
+#include "globals.h"
+#include "element.h"
+#include "grid.h"
+#include "save.h"
+#include "menu.h"
+#include "color.h"
+#include "inventory.h"
 
 void setup() {
     initscr();

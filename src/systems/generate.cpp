@@ -2,9 +2,9 @@
 #include <stack>
 #include <utility>
 #include <random>
-#include "../include/grid.h"
-#include "../include/globals.h"
-#include "../include/element.h"
+#include "grid.h"
+#include "globals.h"
+#include "element.h"
 
 void generateMap() {
     clearGrid(); // clear the grid before generating a new map

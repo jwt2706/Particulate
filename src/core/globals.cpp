@@ -1,4 +1,4 @@
-#include "../include/globals.h"
+#include "globals.h"
 
 const char* version = "v0.0.1";
 const char* authors = "jwt2706 (https://jthome.net)";

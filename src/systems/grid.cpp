@@ -1,6 +1,6 @@
-#include "../include/globals.h"
-#include "../include/grid.h"
-#include "../include/color.h"
+#include "globals.h"
+#include "grid.h"
+#include "color.h"
 
 void initGrid() {
     // get screen demensions

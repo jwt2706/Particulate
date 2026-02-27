@@ -1,10 +1,10 @@
 #include <ncurses.h>
 #include <algorithm>
 #include <vector>
-#include "../include/element.h"
-#include "../include/color.h"
-#include "../include/globals.h"
-#include "../include/menu.h"
+#include "element.h"
+#include "color.h"
+#include "globals.h"
+#include "menu.h"
 
 void inventory() {
     nodelay(stdscr, FALSE);

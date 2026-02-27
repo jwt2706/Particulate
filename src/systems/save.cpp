@@ -3,8 +3,8 @@
 #include <string>
 #include <vector>
 #include <filesystem>
-#include "../include/globals.h"
-#include "../include/element.h"
+#include "globals.h"
+#include "element.h"
 
 extern int termHeight, termWidth;
 extern Element** grid;

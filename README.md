@@ -9,8 +9,12 @@
 A Powder Game, in the Terminal
 </pre>
 
+<div align="center">
+    <img src="imgs/gameplay.png" alt="Gameplay Image" width="500"/>
+</div>
+
 ## Play Setup
-Coming soon<sup>TM</sup>
+Release coming soon<sup>TM</sup>
 
 ## Development Setup
 1. Install ncurses for your respective os

@@ -90,6 +90,25 @@ void generateMap() {
         }
     }
 
+    // 3b) Reinforce cave ceilings with obsidian to reduce immediate cave-ins.
+    for (int y = yStart + worldH / 4; y < yEnd - 1; ++y) {
+        for (int x = xStart + 1; x < xEnd - 1; ++x) {
+            if (grid[y][x].getName() != "air") {
+                continue;
+            }
+
+            int roofY = y - 1;
+            if (roofY < yStart) {
+                continue;
+            }
+
+            const std::string roofName = grid[roofY][x].getName();
+            if (roofName != "air" && roofName != "water" && roofName != "lava" && roofName != "obsidian") {
+                grid[roofY][x] = Element::fromName("obsidian");
+            }
+        }
+    }
+
     // 4) Add surface lakes.
     int lakeCount = std::max(1, worldW / 35);
     for (int i = 0; i < lakeCount; ++i) {

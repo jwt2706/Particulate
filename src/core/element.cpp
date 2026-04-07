@@ -14,16 +14,18 @@ std::vector<Element> Element::elements = {
     Element(8,      "ice",      '=',    51,         5,          true,       false,      false,      false,      true,   false),
     Element(9,      "wood",     '|',    130,        6,          false,      true,       false,      false,      false,  false),
     Element(10,     "leaf",     '#',    46,         2,          false,      true,       false,      false,      false,  false),
-    Element(11,     "steam",    '^',    250,        1,          true,       false,      false,      false,      false,  true),
+    Element(11,     "steam",    '^',    250,        0,          true,       false,      false,      false,      false,  true),
     Element(12,     "oil",      '~',    53,         4,          true,       true,       false,      false,      false,  true),
     Element(13,     "metal",    '$',    7,          15,         false,      false,      false,      false,      false,  false),
     Element(14,     "mud",      '&',    94,         9,          true,       false,      false,      false,      true,   false),
     Element(15,     "acid",     '!',    118,        3,          true,       false,      true,       false,      false,  true),
     Element(16,     "cloud",    '~',    252,        -1,         true,       false,      false,      false,      false,  true),
     Element(17,     "glass",    '=',    159,        10,         false,      false,      false,      false,      false,  false),
-    Element(18,     "coal",     '#',    16,         8,          false,      true,       false,      false,      true,   false),
+    Element(18,     "coal",     '#',    240,        8,          false,      true,       false,      false,      true,   false),
     Element(19,     "gravel",   '%',    246,        9,          true,       false,      false,      false,      true,   false),
     Element(20,     "obsidian", 'O',    237,        16,         false,      false,      false,      false,      false,  false),
+    Element(21,     "smoke",    '\'',   244,        0,          true,       false,      false,      false,      false,  true),
+    Element(22,     "clay",     ';',    173,        10,         true,       false,      false,      false,      true,   false),
 };
 
 // constructors

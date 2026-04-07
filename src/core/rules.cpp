@@ -61,6 +61,202 @@ void initializeRules() {
             .build()
     );
 
+    // CHEMISTRY INTERACTIONS
+    TransformationRegistry::registerTransformation(
+        TransformationBuilder("lava_quenches_with_water")
+            .requireAll({
+                [](int y, int x) {
+                    return getFrameElement(y, x).getName() == "lava";
+                },
+                [](int y, int x) {
+                    for (int dy = -1; dy <= 1; ++dy) {
+                        for (int dx = -1; dx <= 1; ++dx) {
+                            if (dy == 0 && dx == 0) continue;
+                            int ny = y + dy;
+                            int nx = x + dx;
+                            if (ny >= BORDER_SIZE && ny < termHeight - BORDER_SIZE &&
+                                nx >= BORDER_SIZE && nx < termWidth - BORDER_SIZE &&
+                                getFrameElement(ny, nx).getName() == "water") {
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
+                }
+            })
+            .customAction([](int y, int x) {
+                grid[y][x] = Element::fromName("obsidian");
+
+                for (int dy = -1; dy <= 1; ++dy) {
+                    for (int dx = -1; dx <= 1; ++dx) {
+                        if (dy == 0 && dx == 0) continue;
+                        int ny = y + dy;
+                        int nx = x + dx;
+                        if (ny >= BORDER_SIZE && ny < termHeight - BORDER_SIZE &&
+                            nx >= BORDER_SIZE && nx < termWidth - BORDER_SIZE &&
+                            getFrameElement(ny, nx).getName() == "water") {
+                            grid[ny][nx] = Element::fromName("steam");
+                        }
+                    }
+                }
+            })
+            .setPriority(12)
+            .build()
+    );
+
+    TransformationRegistry::registerTransformation(
+        TransformationBuilder("sand_plus_water_makes_mud")
+            .requireAll({
+                [](int y, int x) {
+                    return getFrameElement(y, x).getName() == "sand";
+                },
+                [](int y, int x) {
+                    for (int dy = -1; dy <= 1; ++dy) {
+                        for (int dx = -1; dx <= 1; ++dx) {
+                            if (dy == 0 && dx == 0) continue;
+                            int ny = y + dy;
+                            int nx = x + dx;
+                            if (ny >= BORDER_SIZE && ny < termHeight - BORDER_SIZE &&
+                                nx >= BORDER_SIZE && nx < termWidth - BORDER_SIZE &&
+                                getFrameElement(ny, nx).getName() == "water") {
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
+                }
+            })
+            .customAction([](int y, int x) {
+                if (rand() % 100 < 45) {
+                    grid[y][x] = Element::fromName("mud");
+                }
+            })
+            .setPriority(9)
+            .build()
+    );
+
+    TransformationRegistry::registerTransformation(
+        TransformationBuilder("dirt_plus_water_makes_mud")
+            .requireAll({
+                [](int y, int x) {
+                    return getFrameElement(y, x).getName() == "dirt";
+                },
+                [](int y, int x) {
+                    for (int dy = -1; dy <= 1; ++dy) {
+                        for (int dx = -1; dx <= 1; ++dx) {
+                            if (dy == 0 && dx == 0) continue;
+                            int ny = y + dy;
+                            int nx = x + dx;
+                            if (ny >= BORDER_SIZE && ny < termHeight - BORDER_SIZE &&
+                                nx >= BORDER_SIZE && nx < termWidth - BORDER_SIZE &&
+                                getFrameElement(ny, nx).getName() == "water") {
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
+                }
+            })
+            .customAction([](int y, int x) {
+                if (rand() % 100 < 25) {
+                    grid[y][x] = Element::fromName("mud");
+                }
+            })
+            .setPriority(8)
+            .build()
+    );
+
+    TransformationRegistry::registerTransformation(
+        TransformationBuilder("mud_bakes_to_clay")
+            .requireAll({
+                [](int y, int x) {
+                    return getFrameElement(y, x).getName() == "mud";
+                },
+                [](int y, int x) {
+                    for (int dy = -1; dy <= 1; ++dy) {
+                        for (int dx = -1; dx <= 1; ++dx) {
+                            if (dy == 0 && dx == 0) continue;
+                            int ny = y + dy;
+                            int nx = x + dx;
+                            if (ny >= BORDER_SIZE && ny < termHeight - BORDER_SIZE &&
+                                nx >= BORDER_SIZE && nx < termWidth - BORDER_SIZE &&
+                                getFrameElement(ny, nx).isIgniter()) {
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
+                }
+            })
+            .customAction([](int y, int x) {
+                if (rand() % 100 < 35) {
+                    grid[y][x] = Element::fromName("clay");
+                }
+            })
+            .setPriority(8)
+            .build()
+    );
+
+    TransformationRegistry::registerTransformation(
+        TransformationBuilder("clay_softens_near_water")
+            .requireAll({
+                [](int y, int x) {
+                    return getFrameElement(y, x).getName() == "clay";
+                },
+                [](int y, int x) {
+                    for (int dy = -1; dy <= 1; ++dy) {
+                        for (int dx = -1; dx <= 1; ++dx) {
+                            if (dy == 0 && dx == 0) continue;
+                            int ny = y + dy;
+                            int nx = x + dx;
+                            if (ny >= BORDER_SIZE && ny < termHeight - BORDER_SIZE &&
+                                nx >= BORDER_SIZE && nx < termWidth - BORDER_SIZE &&
+                                getFrameElement(ny, nx).getName() == "water") {
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
+                }
+            })
+            .customAction([](int y, int x) {
+                if (rand() % 100 < 20) {
+                    grid[y][x] = Element::fromName("mud");
+                }
+            })
+            .setPriority(7)
+            .build()
+    );
+
+    TransformationRegistry::registerTransformation(
+        TransformationBuilder("smoke_rises_and_fades")
+            .requireAll({
+                [](int y, int x) {
+                    return getFrameElement(y, x).getName() == "smoke";
+                },
+                [](int y, int x) {
+                    return grid[y][x].getId() == getFrameElement(y, x).getId();
+                }
+            })
+            .customAction([](int y, int x) {
+                int ny = y - 1;
+                if (ny >= BORDER_SIZE &&
+                    getFrameElement(ny, x).getName() == "air" &&
+                    grid[ny][x].getId() == getFrameElement(ny, x).getId() &&
+                    rand() % 100 < 70) {
+                    grid[ny][x] = Element::fromName("smoke");
+                    grid[y][x] = Element::fromName("air");
+                    return;
+                }
+
+                if (rand() % 100 < 22) {
+                    grid[y][x] = Element::fromName("air");
+                }
+            })
+            .setPriority(6)
+            .build()
+    );
+
     // FIRE INTERACTIONS
     // burn like the original updateGrid logic: any igniter spreads to all 8
     // flammable neighbors, and burnout igniters turn into air afterward
@@ -188,6 +384,7 @@ void initializeRules() {
                 if (!hasFuel) {
                     int ny = y - 1;
                     int nx = x;
+                    bool rose = false;
 
                     if (ny >= BORDER_SIZE && ny < termHeight - BORDER_SIZE &&
                         nx >= BORDER_SIZE && nx < termWidth - BORDER_SIZE &&
@@ -195,9 +392,14 @@ void initializeRules() {
                         grid[ny][nx].getId() == getFrameElement(ny, nx).getId() &&
                         rand() % 2 == 0) {
                         grid[ny][nx] = Element::fromName("fire");
+                        rose = true;
                     }
 
-                    grid[y][x] = Element::fromName("air");
+                    if (!rose && rand() % 100 < 45) {
+                        grid[y][x] = Element::fromName("smoke");
+                    } else {
+                        grid[y][x] = Element::fromName("air");
+                    }
                 }
             })
             .setPriority(5)

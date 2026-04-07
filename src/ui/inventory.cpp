@@ -34,6 +34,7 @@ void inventory() {
         attron(A_BOLD);
         mvwprintw(stdscr, 5, 2, "Elements:");
         attroff(A_BOLD);
+        int iconColumn = 22;
         
         // Display elements
         for (int i = 0; i < numElements; ++i) {
@@ -53,7 +54,7 @@ void inventory() {
             mvprintw(y, 2, "%i. %s", elements[i].getId(), elements[i].getName().c_str());
             int color = elements[i].getColor();
             wattron(stdscr, COLOR_PAIR(color));
-            mvprintw(y, 12, "%c", elements[i].getAscii());
+            mvprintw(y, iconColumn, "%c", elements[i].getAscii());
             wattroff(stdscr, COLOR_PAIR(color));
         
             if (isInHotbar) {

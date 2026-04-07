@@ -51,62 +51,80 @@ int main() {
     ts.tv_nsec = 1000000000 / fps; // set the frame rate
     MEVENT event;
     while (true) {
-        int ch = getch(); // user input
-        switch (ch) {
-            case KEY_UP: {
-                if (selectedY > BORDER_SIZE) {
-                    selectedY--;
-                }
-                break;
+        int moveX = 0;
+        int moveY = 0;
+        bool placeRequested = false;
+        bool openInventory = false;
+        bool openMenu = false;
+
+        // drain all pending input this frame so held keys do not create delayed backlog
+        int ch = ERR;
+        while ((ch = getch()) != ERR) {
+            switch (ch) {
+                case KEY_UP:
+                    moveY--;
+                    break;
+                case KEY_DOWN:
+                    moveY++;
+                    break;
+                case KEY_LEFT:
+                    moveX--;
+                    break;
+                case KEY_RIGHT:
+                    moveX++;
+                    break;
+                case 'i':
+                    openInventory = true;
+                    break;
+                case 'p':
+                case 27: // 'p' or ESC to pause the game
+                    openMenu = true;
+                    break;
+                case 10: // ENTER key to place element
+                    placeRequested = true;
+                    break;
+                case KEY_MOUSE:
+                    if (getmouse(&event) == OK) {
+                        selectedX = event.x;
+                        selectedY = event.y;
+
+                        if (selectedX < BORDER_SIZE) selectedX = BORDER_SIZE;
+                        if (selectedX > termWidth - BORDER_SIZE - 1) selectedX = termWidth - BORDER_SIZE - 1;
+                        if (selectedY < BORDER_SIZE) selectedY = BORDER_SIZE;
+                        if (selectedY > termHeight - BORDER_SIZE - 1) selectedY = termHeight - BORDER_SIZE - 1;
+
+                        // spawn from mouse only once per frame even if many mouse events queue up
+                        if (event.bstate & (BUTTON1_PRESSED | BUTTON1_CLICKED | BUTTON1_DOUBLE_CLICKED | BUTTON1_TRIPLE_CLICKED)) {
+                            placeRequested = true;
+                        }
+                    }
+                    break;
+                default:
+                    // handle hotbar keys
+                    if (ch >= '0' && ch <= '9') {
+                        int index = (ch == '0') ? (hotbar.size() - 1) : (ch - '1');
+                        selectedHotbarIndex = index;
+                    }
+                    break;
             }
-            case KEY_DOWN: {
-                if (selectedY < termHeight - BORDER_SIZE - 1) {
-                    selectedY++;
-                }
-                break;
-            }
-            case KEY_LEFT: {
-                if (selectedX > BORDER_SIZE) {
-                    selectedX--;
-                }
-                break;
-            }
-            case KEY_RIGHT: {
-                if (selectedX < termWidth - BORDER_SIZE - 1) {
-                    selectedX++;
-                }
-                break;
-            }
-            case 'i': {
-                inventory();
-                break;
-            }
-            case 'p' :
-            case 27: { // 'p' or ESC to pause the game
-                mainMenu();
-                break;
-            }
-            case 10: { // ENTER key to place element
-                grid[selectedY][selectedX] = Element::fromId(hotbar[selectedHotbarIndex]);
-                break;
-            }
-            default: {
-                // handle hotbar keys
-                if (ch >= '0' && ch <= '9') {
-                    // convert number key input to int
-                    int index = (ch == '0') ? (hotbar.size() - 1) : (ch - '1');
-                    selectedHotbarIndex = index;
-                }
-                break;
-            }
-        }    
-    
-        if (ch == KEY_MOUSE) {
-            if (getmouse(&event) == OK) {
-                selectedX = event.x;
-                selectedY = event.y;
-                grid[selectedY][selectedX] = Element::fromId(hotbar[selectedHotbarIndex]);
-            }
+        }
+
+        if (openMenu) {
+            mainMenu();
+        } else if (openInventory) {
+            inventory();
+        }
+
+        selectedX += moveX;
+        selectedY += moveY;
+
+        if (selectedX < BORDER_SIZE) selectedX = BORDER_SIZE;
+        if (selectedX > termWidth - BORDER_SIZE - 1) selectedX = termWidth - BORDER_SIZE - 1;
+        if (selectedY < BORDER_SIZE) selectedY = BORDER_SIZE;
+        if (selectedY > termHeight - BORDER_SIZE - 1) selectedY = termHeight - BORDER_SIZE - 1;
+
+        if (placeRequested) {
+            grid[selectedY][selectedX] = Element::fromId(hotbar[selectedHotbarIndex]);
         }
         
         updateGrid();

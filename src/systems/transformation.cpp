@@ -6,14 +6,13 @@
 // - Antoine Lavoisier
 
 std::vector<Transformation> TransformationRegistry::transformations;
-static unsigned long long transformationFrameTick = 0;
 static std::vector<Element> transformationFrameSnapshot;
 static int transformationSnapshotHeight = 0;
 static int transformationSnapshotWidth = 0;
 
 // Transformation constructor
 Transformation::Transformation(const std::string& name, ConditionCheck cond, TransformationAction act, int priority)
-    : name(name), condition(cond), action(act), priority(priority), frame_interval(0) {}
+    : name(name), condition(cond), action(act), priority(priority) {}
 
 // TransformationBuilder implementation
 TransformationBuilder::TransformationBuilder(const std::string& name) 
@@ -181,11 +180,6 @@ TransformationBuilder& TransformationBuilder::setPriority(int p) {
     return *this;
 }
 
-TransformationBuilder& TransformationBuilder::setFrameInterval(int interval) {
-    frame_interval = interval;
-    return *this;
-}
-
 Transformation TransformationBuilder::build() {
     // ensure we have a valid condition
     if (!conditionCheck) {
@@ -194,9 +188,7 @@ Transformation TransformationBuilder::build() {
     if (!transformAction) {
         transformAction = [](int y, int x) {};
     }
-    Transformation t(name, conditionCheck, transformAction, priority);
-    t.frame_interval = frame_interval;
-    return t;
+    return Transformation(name, conditionCheck, transformAction, priority);
 }
 
 // TransformationRegistry implementation
@@ -220,8 +212,6 @@ void TransformationRegistry::sortByPriority() {
 }
 
 void beginTransformationFrame() {
-    ++transformationFrameTick;
-
     transformationSnapshotHeight = termHeight;
     transformationSnapshotWidth = termWidth;
     transformationFrameSnapshot.resize(static_cast<size_t>(termHeight * termWidth));
@@ -252,12 +242,6 @@ bool applyTransformation(int y, int x) {
     auto& transformations = TransformationRegistry::getTransformations();
     
     for (auto& transformation : transformations) {
-        // check if this transformation is scheduled for the current frame.
-        if (transformation.frame_interval > 0 &&
-            transformationFrameTick % static_cast<unsigned long long>(transformation.frame_interval) != 0) {
-            continue;  // skip this transformation, not time yet
-        }
-        
         // check condition and apply transformation
         if (transformation.condition(y, x)) {
             transformation.action(y, x);

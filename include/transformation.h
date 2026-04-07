@@ -19,7 +19,6 @@ public:
     ConditionCheck condition;
     TransformationAction action;
     int priority; // higher priority transformations are checked first
-    int frame_interval; // how many frames between executions (0 = every frame)
 
     Transformation(const std::string& name, ConditionCheck cond, TransformationAction act, int priority = 0);
 };
@@ -31,7 +30,6 @@ private:
     ConditionCheck conditionCheck;
     TransformationAction transformAction;
     int priority = 0;
-    int frame_interval = 0;
 
 public:
     TransformationBuilder(const std::string& name);
@@ -54,9 +52,6 @@ public:
     
     // Priority setter
     TransformationBuilder& setPriority(int p);
-    
-    // Execution rate setter (frames between executions)
-    TransformationBuilder& setFrameInterval(int interval);
     
     // Build the transformation
     Transformation build();

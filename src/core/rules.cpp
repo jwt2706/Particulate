@@ -57,7 +57,6 @@ void initializeRules() {
                     }
                 }
             })
-            .setFrameInterval(1)
             .setPriority(1)
             .build()
     );
@@ -151,7 +150,6 @@ void initializeRules() {
                     grid[y][x] = Element::fromName("air");
                 }
             })
-            .setFrameInterval(1)
             .setPriority(10)
             .build()
     );
@@ -202,7 +200,6 @@ void initializeRules() {
                     grid[y][x] = Element::fromName("air");
                 }
             })
-            .setFrameInterval(1)
             .setPriority(5)
             .build()
     );

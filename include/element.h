@@ -16,6 +16,7 @@ private:
     bool movable;       // whether the element can move
     bool flammable;     // whether the element can catch fire
     bool igniter;       // whether the element can start a fire on contact
+    bool burnOut;       // whether the element should burn out after igniting
     bool piles;         // whether the element can form piles
     bool diffusable;    // whether the element can diffuse into surrounding elements
 
@@ -25,7 +26,7 @@ private:
 public:
     Element();
     Element(const int id, const std::string& name, char ascii, int color, int density,
-            bool movable, bool flammable, bool igniter, bool piles, bool diffusable);
+            bool movable, bool flammable, bool igniter, bool burnOut, bool piles, bool diffusable);
 
     // accessor methods
     std::string getName() const;
@@ -36,6 +37,7 @@ public:
     bool isMovable() const;
     bool isFlammable() const;
     bool isIgniter() const;
+    bool isBurnOut() const;
     bool isPiles() const;
     bool isDiffusable() const;
 

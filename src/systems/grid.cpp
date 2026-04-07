@@ -1,6 +1,7 @@
 #include "globals.h"
 #include "grid.h"
 #include "color.h"
+#include "transformation.h"
 
 void initGrid() {
     // get screen demensions
@@ -131,81 +132,11 @@ void resizeGrid(int sig) {
 }
 
 void updateGrid() {
-    // Create a temporary grid to store updates
-    Element** newGrid = new Element*[termHeight];
-    for (int i = 0; i < termHeight; ++i) {
-        newGrid[i] = new Element[termWidth];
-        for (int j = 0; j < termWidth; ++j) {
-            newGrid[i][j] = grid[i][j]; // Copy the current grid
-        }
-    }
-
-    // helper to handle element movement
-    auto tryMove = [&](int y, int x, int newY, int newX) {
-        if (newY >= BORDER_SIZE && newY < termHeight - BORDER_SIZE &&
-            newX >= BORDER_SIZE && newX < termWidth - BORDER_SIZE &&
-            grid[newY][newX].getDensity() < grid[y][x].getDensity()) {
-            std::swap(newGrid[y][x], newGrid[newY][newX]); // swap elements
-            return true;
-        }
-            return false;
-    };
-
-    // Iterate through the grid
-    for (int y = termHeight - 2; y >= BORDER_SIZE; --y) { // Bottom to top
+    // apply all simulation logic through transformation rules once per frame.
+    beginTransformationFrame();
+    for (int y = termHeight - BORDER_SIZE - 1; y >= BORDER_SIZE; --y) {
         for (int x = BORDER_SIZE; x < termWidth - BORDER_SIZE; ++x) {
-            Element& current = grid[y][x];
-
-            if (current.isMovable()) {
-                // handle gravity
-                if (tryMove(y, x, y + 1, x)) continue; // strait down
-                if (current.isPiles()) {
-                    if (tryMove(y, x, y + 1, x - 1)) continue; // down left
-                    if (tryMove(y, x, y + 1, x + 1)) continue; // down right
-                }
-                
-                // make liquids flatten out
-                if (current.isDiffusable()) {
-                    int dir = rand() % 3; // 0 = left, 1 = right, 2 = none
-                
-                    switch (dir) {
-                        case 0: // try to go to the left
-                            if (tryMove(y, x, y, x - 1)) continue;
-                            break;
-                        case 1: // try to go to the right
-                            if (tryMove(y, x, y, x + 1)) continue;
-                            break;
-                        case 2: // dont move
-                            break;
-                    }
-                }
-
-                // handle fire burning
-                if (current.isIgniter()) {
-                    bool burnOut = true;
-
-                    for (int dy = -1; dy <= 1; ++dy) {
-                        for (int dx = -1; dx <= 1; ++dx) {
-                            int newY = y + dy;
-                            int newX = x + dx;
-                            if (newY >= BORDER_SIZE && newY < termHeight - BORDER_SIZE &&
-                                newX >= BORDER_SIZE && newX < termWidth - BORDER_SIZE &&
-                                grid[newY][newX].isFlammable()) {
-                                newGrid[newY][newX] = Element::fromName("fire"); // turn flammable element into fire
-                                burnOut = true;
-                            }
-                        }
-                    }
-
-                    if (burnOut && current.getName() == "fire") {
-                        newGrid[y][x] = Element::fromName("air"); // burn out the fire
-                    }
-                }
-            }
+            applyTransformation(y, x);
         }
     }
-
-    // Replace the old grid with the updated grid
-    freeGrid();
-    grid = newGrid;
 }

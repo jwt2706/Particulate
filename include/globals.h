@@ -4,6 +4,7 @@
 #include <string>
 #include <ncurses.h>
 #include "element.h"
+#include "transformation.h"
 
 // global variables
 extern const char* version;

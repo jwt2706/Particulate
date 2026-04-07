@@ -13,6 +13,7 @@
 #include "menu.h"
 #include "color.h"
 #include "inventory.h"
+#include "rules.h"
 
 void setup() {
     initscr();
@@ -37,6 +38,7 @@ void setup() {
     initColorPairs();
     playwin = newwin(termHeight, termWidth, 0, 0); // create window for user
     signal(SIGWINCH, resizeGrid); // handle window resize dynamically
+    initializeRules(); // load transformation rules
 }
 
 int main() {

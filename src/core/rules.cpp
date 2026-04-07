@@ -112,9 +112,36 @@ void initializeRules() {
                 }
 
                 if (count > 0) {
+                    int ignitedCount = 0;
                     for (int i = 0; i < count; ++i) {
                         int ny = flammableNeighbors[i][0];
                         int nx = flammableNeighbors[i][1];
+
+                        // Irregular fire front: random spread with slight upward bias.
+                        int chance = 45;
+                        if (ny < y) {
+                            chance += 25; // prefer rising flames
+                        } else if (ny > y) {
+                            chance -= 15; // less likely to spread downward
+                        }
+                        if (nx != x) {
+                            chance -= 5; // diagonals ignite a bit less often
+                        }
+
+                        if (chance < 10) chance = 10;
+                        if (chance > 90) chance = 90;
+
+                        if (rand() % 100 < chance) {
+                            grid[ny][nx] = Element::fromName("fire");
+                            ++ignitedCount;
+                        }
+                    }
+
+                    // Keep burn propagation alive when all random rolls fail.
+                    if (ignitedCount == 0) {
+                        int fallback = rand() % count;
+                        int ny = flammableNeighbors[fallback][0];
+                        int nx = flammableNeighbors[fallback][1];
                         grid[ny][nx] = Element::fromName("fire");
                     }
                 }

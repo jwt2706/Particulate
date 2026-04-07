@@ -22,6 +22,8 @@ std::vector<Element> Element::elements = {
     Element(16,     "cloud",    '~',    252,        -1,         true,       false,      false,      false,      false,  true),
     Element(17,     "glass",    '=',    159,        10,         false,      false,      false,      false,      false,  false),
     Element(18,     "coal",     '#',    16,         8,          false,      true,       false,      false,      true,   false),
+    Element(19,     "gravel",   '%',    246,        9,          true,       false,      false,      false,      true,   false),
+    Element(20,     "obsidian", 'O',    237,        16,         false,      false,      false,      false,      false,  false),
 };
 
 // constructors

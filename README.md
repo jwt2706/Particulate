@@ -12,7 +12,22 @@ A Powder Game, in the Terminal
 Particulate is a particle sandbox game that lets you spawn various elements into a miniature ASCII world right in your terminal. Watch them interact dynamically, even as you resize the window!
 
 ## Play
-Release coming soon<sup>TM</sup>
+Supported Plarforms: **Linux, MacOS**<br />
+Windows support coming soon<sup>TM</sup>
+
+### Setup
+1. Download the latest build from [here](https://github.com/jwt2706/Particulate/releases/latest) for your respective OS.
+2. Extract the folder.
+3. Open a terminal in the location you downloaded Particulate.
+4. Make the binary executable (if needed):
+    ```
+    chmod +x particulate
+    ```
+5. Start the game:
+    ```
+    ./particulate
+    ```
+Have fun! :D
 
 ## Screenshots
 <div align="center">
@@ -22,6 +37,6 @@ Release coming soon<sup>TM</sup>
 </div>
 
 ## Development Setup
-1. Install ncurses for your respective os
+1. Install ncurses for your respective os (windows doesn't support ncurses boooo)
 2. Clone the repo
 3. Run make

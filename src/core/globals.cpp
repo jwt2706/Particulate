@@ -1,6 +1,10 @@
 #include "globals.h"
 
-const char* version = "v0.0.1";
+#ifndef VERSION
+#define VERSION "dev-env"
+#endif
+
+const char* version = VERSION;
 const char* authors = "jwt2706 (https://jthome.net)";
 int BORDER_SIZE = 1;
 WINDOW* playwin = nullptr;

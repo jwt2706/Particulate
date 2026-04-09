@@ -17,6 +17,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Get version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF_NAME}" >> $GITHUB_ENV
+
       - name: Install dependencies (Linux)
         if: matrix.os == 'ubuntu-latest'
         run: sudo apt-get update && sudo apt-get install -y libncurses5-dev libncursesw5-dev
@@ -26,19 +30,19 @@ jobs:
         run: brew install ncurses
 
       - name: Build
-        run: make build
+        run: make build VERSION=${{ env.VERSION }}
 
       - name: Package
         run: |
           mkdir dist
           cp build/particulate dist/
-          tar -czvf particulate-${{ matrix.os }}.tar.gz -C dist .
+          tar -czvf particulate-${{ matrix.os }}-${{ env.VERSION }}.tar.gz -C dist .
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: particulate-${{ matrix.os }}
-          path: particulate-${{ matrix.os }}.tar.gz
+          name: particulate-${{ matrix.os }}-${{ env.VERSION }}
+          path: particulate-${{ matrix.os }}-${{ env.VERSION }}.tar.gz
 
   release:
     needs: build

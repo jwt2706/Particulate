@@ -1,4 +1,5 @@
 #include <filesystem>
+#include <algorithm>
 #include <vector>
 #include <string>
 #include <iostream>
@@ -14,6 +15,24 @@
 #include "color.h"
 #include "inventory.h"
 #include "rules.h"
+
+namespace {
+int clampValue(int value, int minValue, int maxValue) {
+    return std::max(minValue, std::min(value, maxValue));
+}
+
+void clampSelectionToGrid() {
+    selectedX = clampValue(selectedX, BORDER_SIZE, termWidth - BORDER_SIZE - 1);
+    selectedY = clampValue(selectedY, BORDER_SIZE, termHeight - BORDER_SIZE - 1);
+}
+
+int clampHotbarIndex(int index) {
+    if (hotbar.empty()) {
+        return 0;
+    }
+    return clampValue(index, 0, static_cast<int>(hotbar.size()) - 1);
+}
+}
 
 void setup() {
     initscr();
@@ -87,11 +106,7 @@ int main() {
                     if (getmouse(&event) == OK) {
                         selectedX = event.x;
                         selectedY = event.y;
-
-                        if (selectedX < BORDER_SIZE) selectedX = BORDER_SIZE;
-                        if (selectedX > termWidth - BORDER_SIZE - 1) selectedX = termWidth - BORDER_SIZE - 1;
-                        if (selectedY < BORDER_SIZE) selectedY = BORDER_SIZE;
-                        if (selectedY > termHeight - BORDER_SIZE - 1) selectedY = termHeight - BORDER_SIZE - 1;
+                        clampSelectionToGrid();
 
                         // spawn from mouse only once per frame even if many mouse events queue up
                         if (event.bstate & (BUTTON1_PRESSED | BUTTON1_CLICKED | BUTTON1_DOUBLE_CLICKED | BUTTON1_TRIPLE_CLICKED)) {
@@ -103,7 +118,7 @@ int main() {
                     // handle hotbar keys
                     if (ch >= '0' && ch <= '9') {
                         int index = (ch == '0') ? (hotbar.size() - 1) : (ch - '1');
-                        selectedHotbarIndex = index;
+                        selectedHotbarIndex = clampHotbarIndex(index);
                     }
                     break;
             }
@@ -117,13 +132,10 @@ int main() {
 
         selectedX += moveX;
         selectedY += moveY;
-
-        if (selectedX < BORDER_SIZE) selectedX = BORDER_SIZE;
-        if (selectedX > termWidth - BORDER_SIZE - 1) selectedX = termWidth - BORDER_SIZE - 1;
-        if (selectedY < BORDER_SIZE) selectedY = BORDER_SIZE;
-        if (selectedY > termHeight - BORDER_SIZE - 1) selectedY = termHeight - BORDER_SIZE - 1;
+        clampSelectionToGrid();
 
         if (placeRequested) {
+            selectedHotbarIndex = clampHotbarIndex(selectedHotbarIndex);
             grid[selectedY][selectedX] = Element::fromId(hotbar[selectedHotbarIndex]);
         }
         

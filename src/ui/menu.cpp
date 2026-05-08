@@ -233,7 +233,13 @@ void loadMenu() {
         }
 
         if (confirm("Are you sure you want to load this game? All unsaved progress will be lost.")) {
-            loadGame(saveFiles[selectedFileIndex]);
+            if (!loadGame(saveFiles[selectedFileIndex])) {
+                clear();
+                mvprintw(0, 0, "Failed to load save file: %s", saveFiles[selectedFileIndex].c_str());
+                refresh();
+                getch();
+                mainMenu();
+            }
         }
     }
 }

@@ -34,38 +34,56 @@ void saveGame(const std::string& filename) {
 }
 
 // load the grid state from a file
-void loadGame(const std::string& filename) {
+bool loadGame(const std::string& filename) {
     clear();
     
     std::ifstream file(saveFolder + filename);
     if (!file.is_open()) {
         std::cerr << "Error opening file for loading: " << filename << std::endl;
-        return;
+        return false;
     }
 
     // read terminal dimensions
-    file >> termHeight >> termWidth;
+    int savedHeight = 0;
+    int savedWidth = 0;
+    if (!(file >> savedHeight >> savedWidth)) {
+        std::cerr << "Error reading save metadata: " << filename << std::endl;
+        return false;
+    }
 
-    // free the old grid memory
-    freeGrid();
+    if (savedHeight != termHeight || savedWidth != termWidth) {
+        std::cerr << "Save file dimensions do not match the current terminal size: " << filename << std::endl;
+        return false;
+    }
 
-    // create a new grid with the right dimensions
-    grid = new Element*[termHeight];
-    for (int i = 0; i < termHeight; ++i) {
-        grid[i] = new Element[termWidth];
+    Element** loadedGrid = new Element*[savedHeight];
+    for (int i = 0; i < savedHeight; ++i) {
+        loadedGrid[i] = new Element[savedWidth];
     }
 
     // read element data onto grid
-    for (int y = 0; y < termHeight; ++y) {
-        for (int x = 0; x < termWidth; ++x) {
+    for (int y = 0; y < savedHeight; ++y) {
+        for (int x = 0; x < savedWidth; ++x) {
             int id;
-            file >> id;
-            grid[y][x] = Element::fromId(id); // create element from id
+            if (!(file >> id)) {
+                for (int i = 0; i < savedHeight; ++i) {
+                    delete[] loadedGrid[i];
+                }
+                delete[] loadedGrid;
+                std::cerr << "Save file ended early while reading grid data: " << filename << std::endl;
+                return false;
+            }
+            loadedGrid[y][x] = Element::fromId(id); // create element from id
         }
     }
 
+    // free the old grid memory only after the new state has been validated
+    freeGrid();
+    grid = loadedGrid;
+
     file.close();
     std::cout << "Game loaded from " << filename << std::endl;
+    return true;
 }
 
 std::vector<std::string> getSaveFiles() {

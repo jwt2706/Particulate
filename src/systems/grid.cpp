@@ -1,7 +1,9 @@
+#include <algorithm>
 #include "globals.h"
 #include "grid.h"
 #include "color.h"
 #include "transformation.h"
+#include "selection.h"
 
 void initGrid() {
     // get screen demensions
@@ -124,7 +126,12 @@ void resizeGrid(int sig) {
     termWidth = newWidth;
     grid = newGrid;
 
+    clampSelectionToGrid();
+
     // recreate the window
+    if (playwin != nullptr) {
+        delwin(playwin);
+    }
     playwin = newwin(termHeight, termWidth, 0, 0);
     wclear(playwin);
     wresize(playwin, termHeight, termWidth);

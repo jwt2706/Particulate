@@ -25,7 +25,7 @@ void initGrid() {
 void renderGrid() {
     // draw border
     box(playwin, 0, 0);
-    mvwprintw(playwin, 0, 2, "| Particulate %s | Resolution: %dpx * %dpx | FPS: %d | Pause (p) | Inventory (i) |", version, termHeight, termWidth, fps);
+    mvwprintw(playwin, 0, 2, "| Particulate %s | Resolution: %dpx * %dpx | FPS: %d | Brush: %d | Pause (p) | Inventory (i) |", version, termHeight, termWidth, fps, brushSize);
     
     // print hotbar contents
     mvwprintw(playwin, termHeight - 1, 2, "| ");
@@ -52,11 +52,18 @@ void renderGrid() {
     // render the grid of elements
     for (int y = BORDER_SIZE; y < termHeight - BORDER_SIZE; ++y) {
         for (int x = BORDER_SIZE; x < termWidth - BORDER_SIZE; ++x) {
+            bool isSelected = (x == selectedX && y == selectedY);
+            bool inBrush = (brushSize > 0 && std::abs(x - selectedX) <= brushSize && std::abs(y - selectedY) <= brushSize);
 
-            if (x == selectedX && y == selectedY) {
-                wattron(playwin, A_REVERSE); // highlight the selected cell
+            // apply highlight attributes: brush overlay or selection
+            if (isSelected) {
+                wattron(playwin, A_REVERSE);
+            } else if (inBrush) {
+                wattron(playwin, A_STANDOUT);
             } else {
+                // ensure selection/standout cleared
                 wattroff(playwin, A_REVERSE);
+                wattroff(playwin, A_STANDOUT);
             }
 
             // apply the color pair and render the ascii char
@@ -64,6 +71,13 @@ void renderGrid() {
             wattron(playwin, COLOR_PAIR(color));
             mvwaddch(playwin, y, x, grid[y][x].getAscii());
             wattroff(playwin, COLOR_PAIR(color));
+
+            // clear highlight attributes after drawing
+            if (isSelected) {
+                wattroff(playwin, A_REVERSE);
+            } else if (inBrush) {
+                wattroff(playwin, A_STANDOUT);
+            }
         }
     }
 

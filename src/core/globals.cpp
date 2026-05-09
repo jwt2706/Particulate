@@ -15,3 +15,4 @@ Element** grid = nullptr;
 std::string saveFolder = "saves/";
 std::vector<int> hotbar = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 int selectedHotbarIndex = 0;
+int brushSize = 0;

@@ -57,11 +57,12 @@ int main() {
     splashMenu(); // start the game on the splash screen
 
     // game loop
-    struct timespec ts;
-    ts.tv_sec = 0;
-    ts.tv_nsec = 1000000000 / fps; // set the frame rate
     MEVENT event;
     while (true) {
+        // recompute sleep per-frame to reflect dynamic fps changes
+        struct timespec ts;
+        ts.tv_sec = 0;
+        ts.tv_nsec = 1000000000 / std::max(1, fps); // set the frame rate, avoid div by zero
         int moveX = 0;
         int moveY = 0;
         bool placeRequested = false;
@@ -93,6 +94,19 @@ int main() {
                     break;
                 case 10: // ENTER key to place element
                     placeRequested = true;
+                    break;
+                case '+': // increase simulation speed
+                case '=':
+                    fps = std::min(240, fps + 1);
+                    break;
+                case '-': // decrease simulation speed
+                    fps = std::max(1, fps - 1);
+                    break;
+                case ']': // increase brush size
+                    brushSize = std::min(10, brushSize + 1);
+                    break;
+                case '[': // decrease brush size
+                    brushSize = std::max(0, brushSize - 1);
                     break;
                 case KEY_MOUSE:
                     if (getmouse(&event) == OK) {
@@ -128,7 +142,18 @@ int main() {
 
         if (placeRequested) {
             selectedHotbarIndex = clampHotbarIndex(selectedHotbarIndex);
-            grid[selectedY][selectedX] = Element::fromId(hotbar[selectedHotbarIndex]);
+            int elemId = hotbar[selectedHotbarIndex];
+            // apply brush: radius = brushSize (0 = single cell)
+            for (int dy = -brushSize; dy <= brushSize; ++dy) {
+                for (int dx = -brushSize; dx <= brushSize; ++dx) {
+                    int tx = selectedX + dx;
+                    int ty = selectedY + dy;
+                    // clamp target to playable area
+                    tx = clampValue(tx, BORDER_SIZE, termWidth - BORDER_SIZE - 1);
+                    ty = clampValue(ty, BORDER_SIZE, termHeight - BORDER_SIZE - 1);
+                    grid[ty][tx] = Element::fromId(elemId);
+                }
+            }
         }
         
         updateGrid();

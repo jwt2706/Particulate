@@ -18,5 +18,6 @@ extern Element** grid;
 extern std::string saveFolder;
 extern std::vector<int> hotbar;
 extern int selectedHotbarIndex;
+extern int brushSize;
 
 #endif // GLOBALS_H
